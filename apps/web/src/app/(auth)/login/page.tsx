@@ -45,6 +45,13 @@ const Login = () => {
 		);
 	};
 
+	const handleSocialLogin = async (provider: "github" | "google") => {
+		await authClient.signIn.social({
+			provider,
+			callbackURL: `${window.location.origin}/dashboard`,
+		});
+	};
+
 	return (
 		<div className="flex min-h-screen items-center justify-center">
 			<div className="flex flex-1 flex-col justify-center px-4 py-10 lg:px-6">
@@ -71,22 +78,18 @@ const Login = () => {
 						<Button
 							variant="outline"
 							className="flex-1 items-center justify-center space-x-2 py-2"
-							asChild
+							onClick={() => handleSocialLogin("github")}
 						>
-							<Link href="#">
-								<GitHubIcon className="size-5" aria-hidden={true} />
-								<span className="font-medium text-sm">Login with GitHub</span>
-							</Link>
+							<GitHubIcon className="size-5" aria-hidden={true} />
+							<span className="font-medium text-sm">Login with GitHub</span>
 						</Button>
 						<Button
 							variant="outline"
 							className="mt-2 flex-1 items-center justify-center space-x-2 py-2 sm:mt-0"
-							asChild
+							onClick={() => handleSocialLogin("google")}
 						>
-							<Link href="#">
-								<GoogleIcon className="size-4" aria-hidden={true} />
-								<span className="font-medium text-sm">Login with Google</span>
-							</Link>
+							<GoogleIcon className="size-4" aria-hidden={true} />
+							<span className="font-medium text-sm">Login with Google</span>
 						</Button>
 					</div>
 					<div className="relative my-6">
