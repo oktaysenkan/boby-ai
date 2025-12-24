@@ -15,24 +15,30 @@ import { Separator } from "@/components/ui/separator";
 import { authClient } from "@/lib/auth-client";
 
 const schema = z.object({
+	name: z.string().min(1, "Name is required"),
 	email: z.string().email("Invalid email address"),
 	password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
-const Login = () => {
+const Register = () => {
 	const router = useRouter();
 	const { isPending } = authClient.useSession();
 	const form = useForm({
 		resolver: zodResolver(schema),
 		defaultValues: {
+			name: "",
 			email: "",
 			password: "",
 		},
 	});
 
 	const handleSubmit = async (data: z.infer<typeof schema>) => {
-		await authClient.signIn.email(
-			{ email: data.email, password: data.password },
+		await authClient.signUp.email(
+			{
+				name: data.name,
+				email: data.email,
+				password: data.password,
+			},
 			{
 				onSuccess: () => {
 					router.push("/dashboard");
@@ -63,15 +69,15 @@ const Login = () => {
 						</p>
 					</div>
 					<h3 className="mt-6 font-semibold text-foreground text-lg dark:text-foreground">
-						Sign in to your account
+						Create an account
 					</h3>
 					<p className="mt-2 text-muted-foreground text-sm dark:text-muted-foreground">
-						Don&apos;t have an account?{" "}
+						Already have an account?{" "}
 						<Link
-							href="/register"
+							href="/login"
 							className="font-medium text-primary hover:text-primary/90 dark:text-primary hover:dark:text-primary/90"
 						>
-							Sign up
+							Sign in
 						</Link>
 					</p>
 					<div className="mt-8 flex flex-col items-center space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0">
@@ -106,6 +112,26 @@ const Login = () => {
 						onSubmit={form.handleSubmit(handleSubmit)}
 						className="mt-6 space-y-4"
 					>
+						<Controller
+							control={form.control}
+							name="name"
+							render={({ field, fieldState }) => (
+								<Field data-invalid={fieldState.invalid}>
+									<FieldLabel htmlFor={field.name}>Name</FieldLabel>
+									<Input
+										{...field}
+										id={field.name}
+										aria-invalid={fieldState.invalid}
+										type="text"
+										autoComplete="name"
+										placeholder="John Doe"
+									/>
+									{fieldState.invalid && (
+										<FieldError errors={[fieldState.error]} />
+									)}
+								</Field>
+							)}
+						/>
 						<Controller
 							control={form.control}
 							name="email"
@@ -153,7 +179,7 @@ const Login = () => {
 							)}
 						/>
 						<Button type="submit" className="mt-4 w-full" disabled={isPending}>
-							Sign in
+							Create account
 						</Button>
 					</form>
 				</div>
@@ -162,4 +188,4 @@ const Login = () => {
 	);
 };
 
-export default Login;
+export default Register;
