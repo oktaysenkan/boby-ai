@@ -2,6 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
@@ -22,19 +23,23 @@ const schema = z.object({
 
 const Login = () => {
 	const router = useRouter();
-	const { isPending } = authClient.useSession();
+
+	const [isLoading, setIsLoading] = useState(false);
+
 	const form = useForm({
 		resolver: zodResolver(schema),
 		defaultValues: {
 			email: "",
 			password: "",
 		},
+		disabled: isLoading,
 	});
 
 	const handleSubmit = async (data: z.infer<typeof schema>) => {
 		await authClient.signIn.email(
 			{ email: data.email, password: data.password },
 			{
+				onRequest: () => setIsLoading(true),
 				onSuccess: () => {
 					router.push("/");
 					toast.success("Sign in successful");
@@ -42,15 +47,22 @@ const Login = () => {
 				onError: (error) => {
 					toast.error(error.error.message || error.error.statusText);
 				},
+				onSettled: () => setIsLoading(false),
 			},
 		);
 	};
 
 	const handleSocialLogin = async (provider: "github" | "google") => {
-		await authClient.signIn.social({
-			provider,
-			callbackURL: `${window.location.origin}`,
-		});
+		await authClient.signIn.social(
+			{
+				provider,
+				callbackURL: `${window.location.origin}`,
+			},
+			{
+				onRequest: () => setIsLoading(true),
+				onSettled: () => setIsLoading(false),
+			},
+		);
 	};
 
 	return (
@@ -79,6 +91,7 @@ const Login = () => {
 						<Button
 							variant="outline"
 							className="flex-1 items-center justify-center space-x-2 py-2"
+							disabled={isLoading}
 							onClick={() => handleSocialLogin("github")}
 						>
 							<GitHubIcon className="size-5" aria-hidden={true} />
@@ -87,6 +100,7 @@ const Login = () => {
 						<Button
 							variant="outline"
 							className="mt-2 flex-1 items-center justify-center space-x-2 py-2 sm:mt-0"
+							disabled={isLoading}
 							onClick={() => handleSocialLogin("google")}
 						>
 							<GoogleIcon className="size-4" aria-hidden={true} />
@@ -129,6 +143,7 @@ const Login = () => {
 						/>
 						<Controller
 							control={form.control}
+							disabled={isLoading}
 							name="password"
 							render={({ field, fieldState }) => (
 								<Field data-invalid={fieldState.invalid}>
@@ -153,8 +168,8 @@ const Login = () => {
 								</Field>
 							)}
 						/>
-						<Button type="submit" className="mt-4 w-full" disabled={isPending}>
-							{isPending && <Spinner />}
+						<Button type="submit" className="mt-4 w-full" disabled={isLoading}>
+							{isLoading && <Spinner />}
 							Sign in
 						</Button>
 					</form>
