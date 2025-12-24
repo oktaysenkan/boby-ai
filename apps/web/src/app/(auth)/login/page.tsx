@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Spinner } from "@/components/ui/spinner";
 import { authClient } from "@/lib/auth-client";
 
 const schema = z.object({
@@ -35,7 +36,7 @@ const Login = () => {
 			{ email: data.email, password: data.password },
 			{
 				onSuccess: () => {
-					router.push("/dashboard");
+					router.push("/");
 					toast.success("Sign in successful");
 				},
 				onError: (error) => {
@@ -48,7 +49,7 @@ const Login = () => {
 	const handleSocialLogin = async (provider: "github" | "google") => {
 		await authClient.signIn.social({
 			provider,
-			callbackURL: `${window.location.origin}/dashboard`,
+			callbackURL: `${window.location.origin}`,
 		});
 	};
 
@@ -153,6 +154,7 @@ const Login = () => {
 							)}
 						/>
 						<Button type="submit" className="mt-4 w-full" disabled={isPending}>
+							{isPending && <Spinner />}
 							Sign in
 						</Button>
 					</form>

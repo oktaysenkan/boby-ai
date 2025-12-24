@@ -1,13 +1,20 @@
-import { ModeToggle } from "@/components/mode-toggle";
+import { headers } from "next/headers";
 import UserMenu from "@/components/user-menu";
+import { authClient } from "@/lib/auth-client";
 
-export default function Home() {
+export default async function Home() {
+	const session = await authClient.getSession({
+		fetchOptions: {
+			headers: await headers(),
+			throw: true,
+		},
+	});
+
 	return (
 		<div>
-			<div className="container mx-auto flex max-w-3xl flex-row items-center justify-between px-4 py-2">
-				<UserMenu />
-				<ModeToggle />
-			</div>
+			<h1>Dashboard</h1>
+			<p>Welcome {session?.user.name}</p>
+			<UserMenu />
 		</div>
 	);
 }
