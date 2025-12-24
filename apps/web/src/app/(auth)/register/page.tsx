@@ -45,12 +45,13 @@ const Register = () => {
 			},
 			{
 				onRequest: () => setIsLoading(true),
-				onSettled: () => setIsLoading(false),
 				onSuccess: () => {
+					setIsLoading(false);
 					router.push("/");
 					toast.success("Sign in successful");
 				},
 				onError: (error) => {
+					setIsLoading(false);
 					toast.error(error.error.message || error.error.statusText);
 				},
 			},

@@ -11,8 +11,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-	title: "boby-ai",
-	description: "boby-ai",
+	title: "Bobby AI",
+	description: "Bobby AI",
 };
 
 export default function RootLayout({

@@ -1,7 +1,5 @@
 "use client";
-import { MessageCircle } from "lucide-react";
 import {
-	SidebarContent,
 	SidebarGroup,
 	SidebarGroupLabel,
 	SidebarMenu,
@@ -9,23 +7,22 @@ import {
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-const navigation = [
+const chats = [
 	{
-		name: "New chat",
-		url: "/",
-		icon: MessageCircle,
+		name: "Chat 1",
+		url: "/chat/1",
 	},
 ];
 
-export function SidebarNavigation() {
+export function SidebarChats() {
 	return (
 		<SidebarGroup className="group-data-[collapsible=icon]:hidden">
+			<SidebarGroupLabel>Your chats</SidebarGroupLabel>
 			<SidebarMenu>
-				{navigation.map((item) => (
+				{chats.map((item) => (
 					<SidebarMenuItem key={item.name}>
 						<SidebarMenuButton asChild>
 							<a href={item.url}>
-								<item.icon />
 								<span>{item.name}</span>
 							</a>
 						</SidebarMenuButton>
