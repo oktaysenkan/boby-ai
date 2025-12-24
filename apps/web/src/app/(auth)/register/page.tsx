@@ -100,7 +100,7 @@ const Register = () => {
 							onClick={() => handleSocialLogin("github")}
 						>
 							<GitHubIcon className="size-5" aria-hidden={true} />
-							<span className="font-medium text-sm">Login with GitHub</span>
+							<span className="font-medium text-sm">Sign up with GitHub</span>
 						</Button>
 						<Button
 							variant="outline"
@@ -109,7 +109,7 @@ const Register = () => {
 							onClick={() => handleSocialLogin("google")}
 						>
 							<GoogleIcon className="size-4" aria-hidden={true} />
-							<span className="font-medium text-sm">Login with Google</span>
+							<span className="font-medium text-sm">Sign up with Google</span>
 						</Button>
 					</div>
 					<div className="relative my-6">

@@ -11,7 +11,7 @@ const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
 	});
 
 	if (session?.user) {
-		redirect("/");
+		throw redirect("/");
 	}
 
 	return children;
