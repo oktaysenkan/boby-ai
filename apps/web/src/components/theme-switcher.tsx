@@ -27,7 +27,7 @@ export default function ThemeSwitcher() {
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent
-						className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg bg-accent"
+						className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
 						side="right"
 						align="start"
 						sideOffset={24}
