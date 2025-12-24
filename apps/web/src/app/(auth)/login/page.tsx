@@ -40,6 +40,7 @@ const Login = () => {
 			{ email: data.email, password: data.password },
 			{
 				onRequest: () => setIsLoading(true),
+				onSettled: () => setIsLoading(false),
 				onSuccess: () => {
 					router.push("/");
 					toast.success("Sign in successful");
@@ -47,7 +48,6 @@ const Login = () => {
 				onError: (error) => {
 					toast.error(error.error.message || error.error.statusText);
 				},
-				onSettled: () => setIsLoading(false),
 			},
 		);
 	};

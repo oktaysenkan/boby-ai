@@ -44,18 +44,14 @@ const Register = () => {
 				password: data.password,
 			},
 			{
-				onRequest: () => {
-					setIsLoading(true);
-				},
+				onRequest: () => setIsLoading(true),
+				onSettled: () => setIsLoading(false),
 				onSuccess: () => {
 					router.push("/");
 					toast.success("Sign in successful");
 				},
 				onError: (error) => {
 					toast.error(error.error.message || error.error.statusText);
-				},
-				onSettled: () => {
-					setIsLoading(false);
 				},
 			},
 		);
@@ -68,12 +64,8 @@ const Register = () => {
 				callbackURL: `${window.location.origin}`,
 			},
 			{
-				onRequest: () => {
-					setIsLoading(true);
-				},
-				onSettled: () => {
-					setIsLoading(false);
-				},
+				onRequest: () => setIsLoading(true),
+				onSettled: () => setIsLoading(false),
 			},
 		);
 	};
