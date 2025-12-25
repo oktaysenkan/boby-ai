@@ -43,25 +43,27 @@ app.use("*", async (c, next) => {
 
 app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
 
-app.get("/", (c) => {
-	return c.text("OK");
-});
+const router = app
+	.get("/", (c) => {
+		return c.json({ message: "OK" });
+	})
+	.get("/protected", (c) => {
+		const user = c.get("user");
 
-app.get("/protected", (c) => {
-	const user = c.get("user");
+		if (!user) {
+			return c.json(
+				{
+					message: "Unauthorized",
+				},
+				401,
+			);
+		}
 
-	if (!user) {
-		return c.json(
-			{
-				message: "Unauthorized",
-			},
-			401,
-		);
-	}
-
-	return c.json({
-		message: "Protected route",
+		return c.json({
+			message: "Protected route",
+		});
 	});
-});
+
+export type AppType = typeof router;
 
 export default app;

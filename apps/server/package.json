@@ -1,7 +1,15 @@
 {
-	"name": "server",
+	"name": "@boby-ai/server",
 	"type": "module",
 	"main": "src/index.ts",
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
 	"scripts": {
 		"build": "tsdown",
 		"check-types": "tsc -b",

@@ -12,6 +12,10 @@ const chats = [
 		name: "Chat 1",
 		url: "/chat/1",
 	},
+	{
+		name: "Hydration Example",
+		url: "/protected",
+	},
 ];
 
 export function SidebarChats() {
