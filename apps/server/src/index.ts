@@ -1,5 +1,7 @@
 import "dotenv/config";
 import { auth } from "@boby-ai/auth";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
+import { convertToModelMessages, streamText } from "ai";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -10,6 +12,12 @@ type HonoEnv = {
 		session: typeof auth.$Infer.Session.session | null;
 	};
 };
+
+const openrouter = createOpenRouter({
+	apiKey: process.env.OPEN_ROUTER_API_KEY as string,
+});
+
+const chatModel = openrouter.chat("google/gemini-2.5-flash-preview-09-2025");
 
 const app = new Hono<HonoEnv>();
 
@@ -26,6 +34,8 @@ app.use(
 );
 
 app.use("*", async (c, next) => {
+	console.log(c.req.raw.headers);
+
 	const session = await auth.api.getSession({ headers: c.req.raw.headers });
 
 	if (!session) {
@@ -47,17 +57,26 @@ const router = app
 	.get("/", (c) => {
 		return c.json({ message: "OK" });
 	})
+	.post("/chat", async (c) => {
+		const user = c.get("user");
+
+		if (!user) return c.json({ message: "Unauthorized" }, 401);
+
+		const body = await c.req.raw.json();
+
+		const messages = await convertToModelMessages(body.messages);
+
+		const result = streamText({
+			model: chatModel,
+			messages,
+		});
+
+		return result.toUIMessageStreamResponse();
+	})
 	.get("/protected", (c) => {
 		const user = c.get("user");
 
-		if (!user) {
-			return c.json(
-				{
-					message: "Unauthorized",
-				},
-				401,
-			);
-		}
+		if (!user) return c.json({ message: "Unauthorized" }, 401);
 
 		return c.json({
 			message: "Protected route",

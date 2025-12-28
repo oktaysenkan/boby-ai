@@ -26,16 +26,14 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
 	return (
 		<SidebarProvider defaultOpen={defaultOpen}>
 			<AppSidebar session={session} />
-			<SidebarInset>
-				<header className="flex h-16 shrink-0 items-center gap-2">
+			<SidebarInset className="h-screen overflow-x-hidden">
+				<header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b-[0.5px] bg-background">
 					<div className="flex items-center gap-2 px-4">
 						<SidebarTrigger className="-ml-1" />
 					</div>
 				</header>
-				<div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-					<div className="min-h-screen flex-1 rounded-xl md:min-h-min">
-						{children}
-					</div>
+				<div className="flex flex-1 flex-col gap-4 overflow-y-hidden">
+					{children}
 				</div>
 			</SidebarInset>
 		</SidebarProvider>

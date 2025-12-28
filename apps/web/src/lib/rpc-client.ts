@@ -1,11 +1,10 @@
 import { createRPCClient } from "@boby-ai/server/rpc";
-import { isClient, isServer } from "@/lib/env";
+import { isClient } from "@/lib/env";
 
-const BASE_URL = isServer()
-	? process.env.NEXT_PUBLIC_SERVER_URL!
-	: `${window.location.origin}/api`;
-
-export const rpcClient = createRPCClient(BASE_URL, {
+export const rpcClient = createRPCClient(process.env.NEXT_PUBLIC_SERVER_URL!, {
+	init: {
+		credentials: "include",
+	},
 	headers: async () => {
 		if (isClient()) {
 			return {};

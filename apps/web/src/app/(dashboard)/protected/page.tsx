@@ -10,7 +10,7 @@ export default async function Home() {
 
 	return (
 		<HydrationBoundary state={dehydrate(queryClient)}>
-			<div className="flex flex-col gap-4">
+			<div className="flex flex-col gap-4 p-4">
 				<Card>
 					<CardHeader>
 						<CardTitle>SERVER RESPONSE</CardTitle>
