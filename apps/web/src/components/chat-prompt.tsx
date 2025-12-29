@@ -43,10 +43,14 @@ export type ChatPromptForm = {
 };
 
 export type ChatPromptProps = {
+	disabledAgentSelection?: boolean;
 	onSubmit: (form: ChatPromptForm) => void;
 };
 
-export default function ChatPrompt({ onSubmit }: ChatPromptProps) {
+export default function ChatPrompt({
+	onSubmit,
+	disabledAgentSelection = false,
+}: ChatPromptProps) {
 	const [input, setInput] = useState("");
 	const [agent, setAgent] = useState<Agent>();
 	const fileInputRef = useRef<HTMLInputElement>(null);
@@ -122,7 +126,11 @@ export default function ChatPrompt({ onSubmit }: ChatPromptProps) {
 						</DropdownMenu>
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
-								<Button variant="outline" size="sm">
+								<Button
+									variant="outline"
+									size="sm"
+									disabled={disabledAgentSelection}
+								>
 									{agent?.icon ? <agent.icon /> : <Brain />}
 									<span>{agent?.name ?? "Agent"}</span>
 									<ChevronDown />

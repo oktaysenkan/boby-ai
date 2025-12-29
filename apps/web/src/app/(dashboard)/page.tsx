@@ -17,9 +17,9 @@ export default function ChatBasic() {
 	const { messages, sendMessage, status } = useChat({
 		transport: new DefaultChatTransport({
 			api: `${process.env.NEXT_PUBLIC_SERVER_URL}/chat`,
-			credentials: "include",
 		}),
 		onError: (error) => {
+			console.log(error);
 			toast.error(error.message);
 		},
 	});
@@ -74,7 +74,10 @@ export default function ChatBasic() {
 					<div className="h-40" />
 				</ChatContainerContent>
 				<div className="absolute right-4 bottom-4 left-4">
-					<ChatPrompt onSubmit={handleSubmit} />
+					<ChatPrompt
+						disabledAgentSelection={!!messages.length}
+						onSubmit={handleSubmit}
+					/>
 				</div>
 			</ChatContainerRoot>
 		</div>

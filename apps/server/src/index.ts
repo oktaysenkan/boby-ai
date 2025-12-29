@@ -1,7 +1,12 @@
 import "dotenv/config";
 import { auth } from "@boby-ai/auth";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
-import { convertToModelMessages, streamText } from "ai";
+import {
+	convertToModelMessages,
+	createUIMessageStream,
+	createUIMessageStreamResponse,
+	streamText,
+} from "ai";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -60,7 +65,20 @@ const router = app
 	.post("/chat", async (c) => {
 		const user = c.get("user");
 
-		if (!user) return c.json({ message: "Unauthorized" }, 401);
+		if (!user) {
+			const response = createUIMessageStreamResponse({
+				stream: createUIMessageStream({
+					execute(options) {
+						options.writer.write({
+							type: "error",
+							errorText: "Unauthorized",
+						});
+					},
+				}),
+			});
+
+			return response;
+		}
 
 		const body = await c.req.raw.json();
 
