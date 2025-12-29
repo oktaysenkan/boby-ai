@@ -1,11 +1,13 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
+import { createId, getAgentName } from "@boby-ai/shared";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
+import { useDebounceCallback } from "usehooks-ts";
 import {
 	Message,
 	MessageContent,
@@ -19,9 +21,6 @@ import {
 import { getQueryClient } from "@/lib/query-client";
 import { cn } from "@/lib/utils";
 import { chatsQuery } from "@/services/queries/chats.query";
-
-const createId = () =>
-	Date.now().toString(36) + Math.random().toString(36).substring(2, 15);
 
 export type ChatProps = {
 	id?: string;
@@ -49,9 +48,15 @@ export default function Chat({
 
 	const [messagesLoading, setMessagesLoading] = React.useState(true);
 
+	const handleScroll = useDebounceCallback(() => {
+		setMessagesLoading(false);
+	}, 100);
+
 	React.useEffect(() => {
-		setTimeout(() => setMessagesLoading(false), 300);
-	}, []);
+		new ResizeObserver(handleScroll).observe(
+			document.getElementById("chat-container-root") as Element,
+		);
+	}, [handleScroll]);
 
 	const lastAssistantMessage = messages.findLast(
 		(message) => message.role === "assistant",
@@ -60,8 +65,13 @@ export default function Chat({
 	const isLoading = status === "submitted";
 
 	const handleSubmit = (form: ChatPromptForm) => {
+		console.log(form);
+
 		sendMessage({
 			text: form.prompt,
+			metadata: {
+				agent: form.agent?.slug,
+			},
 		});
 
 		const isAlreadyNavigated = window.location.href.includes("/chat/");
@@ -70,13 +80,15 @@ export default function Chat({
 
 		window.history.replaceState(null, "", `/chat/${id}`);
 
+		const chatTitle = getAgentName(form.agent?.slug) ?? "Untitled Chat";
+
 		queryClient.setQueryData(chatsQuery.queryKey, (prev) => [
 			{
 				id,
 				messages,
 				createdAt: new Date().toISOString(),
 				updatedAt: new Date().toISOString(),
-				title: "Untitled Chat",
+				title: chatTitle,
 			},
 			...(prev ?? []),
 		]);
@@ -88,17 +100,20 @@ export default function Chat({
 		<div className="flex h-screen w-full flex-col overflow-hidden">
 			<ChatContainerRoot
 				className="flex-1"
+				id="chat-container-root"
 				initial={messagesLoading ? "instant" : "smooth"}
 				resize={messagesLoading ? "instant" : "smooth"}
 			>
 				<ChatContainerContent
+					id="chat-container-content"
 					className={cn(
 						"mx-auto max-w-5xl space-y-4 p-4 transition-all duration-300",
 						messagesLoading ? "opacity-0" : "opacity-100",
 					)}
+					onScroll={handleScroll}
 				>
-					{messages.map((message, index) => (
-						<React.Fragment key={`${message.id}-${index}`}>
+					{messages.map((message, messageIndex) => (
+						<React.Fragment key={`${message.id}-${messageIndex}`}>
 							{message.parts.map((part, partIndex) => {
 								switch (part.type) {
 									case "text":

@@ -20,6 +20,7 @@
 	"dependencies": {
 		"@boby-ai/auth": "workspace:*",
 		"@boby-ai/db": "workspace:*",
+		"@boby-ai/shared": "workspace:*",
 		"@hono/zod-validator": "^0.7.6",
 		"@openrouter/ai-sdk-provider": "^1.5.4",
 		"ai": "^6.0.3",

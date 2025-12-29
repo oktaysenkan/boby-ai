@@ -1,8 +1,7 @@
 import "dotenv/config";
 import { auth } from "@boby-ai/auth";
-import { and, db, desc, eq } from "@boby-ai/db";
-import { user } from "@boby-ai/db/schema/auth";
-import { chat } from "@boby-ai/db/schema/public";
+import { and, db, desc, eq, schema } from "@boby-ai/db";
+import { getAgentName } from "@boby-ai/shared";
 import { zValidator } from "@hono/zod-validator";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import {
@@ -82,6 +81,17 @@ const router = app
 			const user = c.get("user");
 			const body = c.req.valid("json");
 
+			const agentSlug = body.messages.at(0)?.metadata?.agent;
+
+			const agentDetail = await db.query.agent.findFirst({
+				where: eq(schema.agent.slug, agentSlug),
+			});
+
+			const systemPrompt =
+				agentDetail?.systemPrompt ?? "You are a helpful assistant.";
+
+			const chatTitle = getAgentName(agentSlug) ?? "Untitled Chat";
+
 			if (!user) {
 				const response = createUIMessageStreamResponse({
 					stream: createUIMessageStream({
@@ -102,6 +112,7 @@ const router = app
 			);
 
 			const result = streamText({
+				system: systemPrompt,
 				model: chatModel,
 				messages,
 			});
@@ -110,15 +121,15 @@ const router = app
 				originalMessages: body.messages,
 				onFinish: async ({ messages }) => {
 					await db
-						.insert(chat)
+						.insert(schema.chat)
 						.values({
 							id: body.id,
 							userId: user.id,
-							title: "Untitled Chat",
+							title: chatTitle,
 							messages,
 						})
 						.onConflictDoUpdate({
-							target: chat.id,
+							target: schema.chat.id,
 							set: { messages },
 						});
 				},
@@ -132,14 +143,14 @@ const router = app
 
 		const result = await db
 			.select({
-				id: chat.id,
-				title: chat.title,
-				createdAt: chat.createdAt,
-				updatedAt: chat.updatedAt,
+				id: schema.chat.id,
+				title: schema.chat.title,
+				createdAt: schema.chat.createdAt,
+				updatedAt: schema.chat.updatedAt,
 			})
-			.from(chat)
-			.where(eq(chat.userId, user.id))
-			.orderBy(desc(chat.createdAt))
+			.from(schema.chat)
+			.where(eq(schema.chat.userId, user.id))
+			.orderBy(desc(schema.chat.createdAt))
 			.limit(10);
 
 		return c.json(result);
@@ -149,17 +160,29 @@ const router = app
 
 		const user = c.get("user");
 
-		if (!user) {
-			throw new HTTPException(401, { message: "Unauthorized" });
-		}
+		if (!user) throw new HTTPException(401, { message: "Unauthorized" });
 
 		const result = await db.query.chat.findFirst({
-			where: and(eq(chat.id, id), eq(chat.userId, user.id)),
+			where: and(eq(schema.chat.id, id), eq(schema.chat.userId, user.id)),
 		});
 
-		if (!result) {
-			throw new HTTPException(404, { message: "Chat not found" });
-		}
+		if (!result) throw new HTTPException(404, { message: "Chat not found" });
+
+		return c.json(result);
+	})
+	.get("/agents", async (c) => {
+		const user = c.get("user");
+
+		if (!user) throw new HTTPException(401, { message: "Unauthorized" });
+
+		const result = await db
+			.select({
+				id: schema.agent.id,
+				slug: schema.agent.slug,
+				name: schema.agent.name,
+				description: schema.agent.description,
+			})
+			.from(schema.agent);
 
 		return c.json(result);
 	})

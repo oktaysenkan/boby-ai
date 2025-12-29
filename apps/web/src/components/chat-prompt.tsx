@@ -3,15 +3,15 @@
 import {
 	Brain,
 	ChevronDown,
+	DollarSign,
 	HeartHandshake,
+	type Icon,
 	Laptop,
-	Paperclip,
-	Plus,
+	Plane,
 	SendHorizontal,
 	Square,
-	StopCircle,
 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -22,22 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScrollButton } from "@/components/ui/scroll-button";
 import { Textarea } from "@/components/ui/textarea";
-
-type Agent = {
-	name: string;
-	icon: React.ElementType;
-};
-
-const agents: Agent[] = [
-	{
-		name: "Coding Guru",
-		icon: Laptop,
-	},
-	{
-		name: "Health Advisor",
-		icon: HeartHandshake,
-	},
-];
+import { type Agent, useAgents } from "@/services/queries/agents.query";
 
 export type ChatPromptForm = {
 	prompt: string;
@@ -59,6 +44,8 @@ export default function ChatPrompt({
 }: ChatPromptProps) {
 	const [input, setInput] = useState("");
 	const [agent, setAgent] = useState<Agent>();
+
+	const { data: agents } = useAgents();
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -86,6 +73,19 @@ export default function ChatPrompt({
 
 	const handleStop = () => {
 		onStop?.();
+	};
+
+	const getAgentIcon = (
+		slug: string | undefined,
+		props?: Partial<React.ComponentProps<typeof Icon>>,
+	) => {
+		if (slug === "coding-guru") return <Laptop size={16} {...props} />;
+		if (slug === "health-advisor")
+			return <HeartHandshake size={16} {...props} />;
+		if (slug === "financial-advisor")
+			return <DollarSign size={16} {...props} />;
+		if (slug === "travel-planner") return <Plane size={16} {...props} />;
+		return <Brain size={16} {...props} />;
 	};
 
 	return (
@@ -119,19 +119,19 @@ export default function ChatPrompt({
 										size="sm"
 										disabled={disabledAgentSelection}
 									>
-										{agent?.icon ? <agent.icon /> : <Brain />}
+										{getAgentIcon(agent?.slug)}
 										<span>{agent?.name ?? "Agent"}</span>
 										<ChevronDown />
 									</Button>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent align="start">
 									<DropdownMenuGroup className="space-y-1">
-										{agents.map((agent) => (
+										{agents?.map((agent) => (
 											<DropdownMenuItem
 												key={agent.name}
 												onClick={() => setAgent(agent)}
 											>
-												<agent.icon size={16} className="opacity-60" />
+												{getAgentIcon(agent.slug)}
 												{agent.name}
 											</DropdownMenuItem>
 										))}

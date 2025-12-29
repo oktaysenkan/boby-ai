@@ -14,3 +14,16 @@ export const chat = pgTable("chat", {
 		.$onUpdate(() => /* @__PURE__ */ new Date())
 		.notNull(),
 });
+
+export const agent = pgTable("agent", {
+	id: text("id").primaryKey().notNull(),
+	slug: text("slug").notNull().unique(),
+	name: text("name").notNull(),
+	description: text("description").notNull(),
+	systemPrompt: text("system_prompt").notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at")
+		.defaultNow()
+		.$onUpdate(() => /* @__PURE__ */ new Date())
+		.notNull(),
+});
