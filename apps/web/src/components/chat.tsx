@@ -5,7 +5,6 @@ import { DefaultChatTransport, type UIMessage } from "ai";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { InView } from "react-intersection-observer";
 import { toast } from "sonner";
 import {
 	Message,
@@ -35,7 +34,6 @@ export default function Chat({
 }: ChatProps) {
 	const router = useRouter();
 	const queryClient = getQueryClient();
-	const [hidden, setHidden] = React.useState(true);
 
 	const { id, messages, status, sendMessage, stop } = useChat({
 		id: initialId ?? createId(),
@@ -49,8 +47,10 @@ export default function Chat({
 		},
 	});
 
+	const [messagesLoading, setMessagesLoading] = React.useState(true);
+
 	React.useEffect(() => {
-		setTimeout(() => setHidden(false), 300);
+		setTimeout(() => setMessagesLoading(false), 300);
 	}, []);
 
 	const lastAssistantMessage = messages.findLast(
@@ -80,6 +80,7 @@ export default function Chat({
 			},
 			...(prev ?? []),
 		]);
+
 		router.prefetch(`/chat/${id}`);
 	};
 
@@ -87,13 +88,13 @@ export default function Chat({
 		<div className="flex h-screen w-full flex-col overflow-hidden">
 			<ChatContainerRoot
 				className="flex-1"
-				initial={status === "streaming" ? "smooth" : "instant"}
-				resize={status === "streaming" ? "smooth" : "instant"}
+				initial={messagesLoading ? "instant" : "smooth"}
+				resize={messagesLoading ? "instant" : "smooth"}
 			>
 				<ChatContainerContent
 					className={cn(
 						"mx-auto max-w-5xl space-y-4 p-4 transition-all duration-300",
-						hidden ? "opacity-0" : "opacity-100",
+						messagesLoading ? "opacity-0" : "opacity-100",
 					)}
 				>
 					{messages.map((message, index) => (

@@ -8,6 +8,13 @@
       "when": 1766593564998,
       "tag": "0000_luxuriant_star_brand",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1766986490223,
+      "tag": "0001_sparkling_metal_master",
+      "breakpoints": true
     }
   ]
 }
