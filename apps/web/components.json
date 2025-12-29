@@ -22,6 +22,7 @@
   },
   "registries": {
     "@blocks": "https://blocks.so/r/{name}.json",
-    "@ai-elements": "https://registry.ai-sdk.dev/{name}.json"
+    "@ai-elements": "https://registry.ai-sdk.dev/{name}.json",
+    "@simple-ai": "https://simple-ai.dev/r/{name}.json"
   }
 }

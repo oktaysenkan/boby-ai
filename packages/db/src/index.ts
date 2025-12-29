@@ -1,5 +1,7 @@
 import dotenv from "dotenv";
 
+export * from "drizzle-orm";
+
 dotenv.config({
 	path: "../../apps/server/.env",
 });

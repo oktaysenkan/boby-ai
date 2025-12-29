@@ -8,6 +8,8 @@ import {
 	Paperclip,
 	Plus,
 	SendHorizontal,
+	Square,
+	StopCircle,
 } from "lucide-react";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -44,16 +46,19 @@ export type ChatPromptForm = {
 
 export type ChatPromptProps = {
 	disabledAgentSelection?: boolean;
+	isLoading?: boolean;
 	onSubmit: (form: ChatPromptForm) => void;
+	onStop?: () => void;
 };
 
 export default function ChatPrompt({
-	onSubmit,
 	disabledAgentSelection = false,
+	isLoading = false,
+	onSubmit,
+	onStop,
 }: ChatPromptProps) {
 	const [input, setInput] = useState("");
 	const [agent, setAgent] = useState<Agent>();
-	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -79,6 +84,10 @@ export default function ChatPrompt({
 		setInput(e.target.value);
 	};
 
+	const handleStop = () => {
+		onStop?.();
+	};
+
 	return (
 		<div className="relative mx-auto max-w-xl">
 			<div className="flex w-full justify-center pb-2">
@@ -86,7 +95,6 @@ export default function ChatPrompt({
 			</div>
 
 			<div className="overflow-hidden rounded-2xl border border-border bg-card">
-				<input ref={fileInputRef} type="file" multiple className="sr-only" />
 				<div className="grow px-3 pt-3 pb-4">
 					<form onSubmit={handleSubmit}>
 						<Textarea
@@ -103,65 +111,57 @@ export default function ChatPrompt({
 
 				<div className="mb-2 flex items-center justify-between px-2">
 					<div className="flex items-center gap-1">
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<Button
-									variant="outline"
-									size="icon-sm"
-									className="rounded-full"
-								>
-									<Plus />
-								</Button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent align="start">
-								<DropdownMenuGroup className="space-y-1">
-									<DropdownMenuItem
-										onClick={() => fileInputRef.current?.click()}
+						{!disabledAgentSelection && (
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<Button
+										variant="outline"
+										size="sm"
+										disabled={disabledAgentSelection}
 									>
-										<Paperclip size={16} className="opacity-60" />
-										Attach Files
-									</DropdownMenuItem>
-								</DropdownMenuGroup>
-							</DropdownMenuContent>
-						</DropdownMenu>
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<Button
-									variant="outline"
-									size="sm"
-									disabled={disabledAgentSelection}
-								>
-									{agent?.icon ? <agent.icon /> : <Brain />}
-									<span>{agent?.name ?? "Agent"}</span>
-									<ChevronDown />
-								</Button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent align="start">
-								<DropdownMenuGroup className="space-y-1">
-									{agents.map((agent) => (
-										<DropdownMenuItem
-											key={agent.name}
-											onClick={() => setAgent(agent)}
-										>
-											<agent.icon size={16} className="opacity-60" />
-											{agent.name}
-										</DropdownMenuItem>
-									))}
-								</DropdownMenuGroup>
-							</DropdownMenuContent>
-						</DropdownMenu>
+										{agent?.icon ? <agent.icon /> : <Brain />}
+										<span>{agent?.name ?? "Agent"}</span>
+										<ChevronDown />
+									</Button>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent align="start">
+									<DropdownMenuGroup className="space-y-1">
+										{agents.map((agent) => (
+											<DropdownMenuItem
+												key={agent.name}
+												onClick={() => setAgent(agent)}
+											>
+												<agent.icon size={16} className="opacity-60" />
+												{agent.name}
+											</DropdownMenuItem>
+										))}
+									</DropdownMenuGroup>
+								</DropdownMenuContent>
+							</DropdownMenu>
+						)}
 					</div>
 
 					<div>
-						<Button
-							type="submit"
-							disabled={!input.length}
-							size="icon"
-							className="rounded-full bg-primary p-0 disabled:cursor-not-allowed disabled:opacity-50"
-							onClick={handleSubmit}
-						>
-							<SendHorizontal className="fill-primary" />
-						</Button>
+						{isLoading ? (
+							<Button
+								type="submit"
+								size="icon"
+								className="rounded-full bg-primary p-0 disabled:cursor-not-allowed disabled:opacity-50"
+								onClick={handleStop}
+							>
+								<Square className="fill-primary" />
+							</Button>
+						) : (
+							<Button
+								type="submit"
+								disabled={!input.length || isLoading}
+								size="icon"
+								className="rounded-full bg-primary p-0 disabled:cursor-not-allowed disabled:opacity-50"
+								onClick={handleSubmit}
+							>
+								<SendHorizontal className="fill-primary" />
+							</Button>
+						)}
 					</div>
 				</div>
 			</div>

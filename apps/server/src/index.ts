@@ -1,15 +1,22 @@
 import "dotenv/config";
 import { auth } from "@boby-ai/auth";
+import { and, db, desc, eq } from "@boby-ai/db";
+import { user } from "@boby-ai/db/schema/auth";
+import { chat } from "@boby-ai/db/schema/public";
+import { zValidator } from "@hono/zod-validator";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import {
 	convertToModelMessages,
 	createUIMessageStream,
 	createUIMessageStreamResponse,
 	streamText,
+	type UIMessage,
 } from "ai";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { HTTPException } from "hono/http-exception";
 import { logger } from "hono/logger";
+import z from "zod";
 
 type HonoEnv = {
 	Variables: {
@@ -62,44 +69,117 @@ const router = app
 	.get("/", (c) => {
 		return c.json({ message: "OK" });
 	})
-	.post("/chat", async (c) => {
+	.post(
+		"/chat",
+		zValidator(
+			"json",
+			z.object({
+				id: z.string(),
+				messages: z.array(z.any()),
+			}),
+		),
+		async (c) => {
+			const user = c.get("user");
+			const body = c.req.valid("json");
+
+			if (!user) {
+				const response = createUIMessageStreamResponse({
+					stream: createUIMessageStream({
+						execute(options) {
+							options.writer.write({
+								type: "error",
+								errorText: "Unauthorized",
+							});
+						},
+					}),
+				});
+
+				return response;
+			}
+
+			const messages = await convertToModelMessages(
+				body.messages as UIMessage[],
+			);
+
+			const result = streamText({
+				model: chatModel,
+				messages,
+			});
+
+			return result.toUIMessageStreamResponse({
+				originalMessages: body.messages,
+				onFinish: async ({ messages }) => {
+					await db
+						.insert(chat)
+						.values({
+							id: body.id,
+							userId: user.id,
+							title: "Untitled Chat",
+							messages,
+						})
+						.onConflictDoUpdate({
+							target: chat.id,
+							set: { messages },
+						});
+				},
+			});
+		},
+	)
+	.get("/chats", async (c) => {
+		const user = c.get("user");
+
+		if (!user) throw new HTTPException(401, { message: "Unauthorized" });
+
+		const result = await db
+			.select({
+				id: chat.id,
+				title: chat.title,
+				createdAt: chat.createdAt,
+				updatedAt: chat.updatedAt,
+			})
+			.from(chat)
+			.where(eq(chat.userId, user.id))
+			.orderBy(desc(chat.createdAt))
+			.limit(10);
+
+		return c.json(result);
+	})
+	.get("/chat/:id", async (c) => {
+		const { id } = c.req.param();
+
 		const user = c.get("user");
 
 		if (!user) {
-			const response = createUIMessageStreamResponse({
-				stream: createUIMessageStream({
-					execute(options) {
-						options.writer.write({
-							type: "error",
-							errorText: "Unauthorized",
-						});
-					},
-				}),
-			});
-
-			return response;
+			throw new HTTPException(401, { message: "Unauthorized" });
 		}
 
-		const body = await c.req.raw.json();
-
-		const messages = await convertToModelMessages(body.messages);
-
-		const result = streamText({
-			model: chatModel,
-			messages,
+		const result = await db.query.chat.findFirst({
+			where: and(eq(chat.id, id), eq(chat.userId, user.id)),
 		});
 
-		return result.toUIMessageStreamResponse();
+		if (!result) {
+			throw new HTTPException(404, { message: "Chat not found" });
+		}
+
+		return c.json(result);
 	})
 	.get("/protected", (c) => {
 		const user = c.get("user");
 
-		if (!user) return c.json({ message: "Unauthorized" }, 401);
+		if (!user) throw new HTTPException(401, { message: "Unauthorized" });
 
 		return c.json({
 			message: "Protected route",
 		});
 	});
+
+app.onError(async (error, c) => {
+	if (error instanceof HTTPException) {
+		return c.json({ message: error.message }, error.status);
+	}
+
+	return c.json({ message: "Internal Server Error" }, 500);
+});
 
 export type AppType = typeof router;
 

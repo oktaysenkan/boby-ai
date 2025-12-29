@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "next dev --port 3001",
 		"build": "next build",
-		"start": "next start"
+		"start": "next start --port 3001"
 	},
 	"dependencies": {
 		"@ai-sdk/react": "^3.0.3",
@@ -64,6 +64,7 @@
 		"react-day-picker": "^9.13.0",
 		"react-dom": "^19.2.3",
 		"react-hook-form": "^7.69.0",
+		"react-markdown": "^10.1.0",
 		"react-resizable-panels": "^4.0.15",
 		"recharts": "2.15.4",
 		"shadcn": "^3.6.2",

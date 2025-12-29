@@ -16,4 +16,9 @@ export const rpcClient = createRPCClient(process.env.NEXT_PUBLIC_SERVER_URL!, {
 
 		return Object.fromEntries(serverHeaders.entries());
 	},
+	fetch: async (url: RequestInfo | URL, options?: RequestInit) => {
+		const response = await fetch(url, options);
+		if (!response.ok) throw new Error(response.statusText);
+		return response;
+	},
 });

@@ -3,10 +3,10 @@ import type React from "react";
 import { getQueryClient } from "@/lib/query-client";
 
 const QueryProvider = ({ children }: { children: React.ReactNode }) => {
+	const queryClient = getQueryClient();
+
 	return (
-		<QueryClientProvider client={getQueryClient()}>
-			{children}
-		</QueryClientProvider>
+		<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 	);
 };
 
