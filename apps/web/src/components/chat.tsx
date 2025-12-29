@@ -3,16 +3,12 @@
 import { useChat } from "@ai-sdk/react";
 import { createId, getAgentName } from "@boby-ai/shared";
 import { DefaultChatTransport, type UIMessage } from "ai";
-import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
 import { useDebounceCallback } from "usehooks-ts";
-import {
-	Message,
-	MessageContent,
-	MessageResponse,
-} from "@/components/ai-elements/message";
+import { z } from "zod";
+import { MessageList } from "@/components/ai-elements/message";
 import ChatPrompt, { type ChatPromptForm } from "@/components/chat-prompt";
 import {
 	ChatContainerContent,
@@ -20,7 +16,10 @@ import {
 } from "@/components/ui/chat-container";
 import { getQueryClient } from "@/lib/query-client";
 import { cn } from "@/lib/utils";
-import { chatsQuery } from "@/services/queries/chats.query";
+import {
+	type Chat as ChatType,
+	chatsQuery,
+} from "@/services/queries/chats.query";
 
 export type ChatProps = {
 	id?: string;
@@ -37,6 +36,9 @@ export default function Chat({
 	const { id, messages, status, sendMessage, stop } = useChat({
 		id: initialId ?? createId(),
 		messages: initialMessages ?? [],
+		messageMetadataSchema: z.object({
+			agent: z.string(),
+		}),
 		transport: new DefaultChatTransport({
 			api: `${process.env.NEXT_PUBLIC_SERVER_URL}/chat`,
 			credentials: "include",
@@ -45,6 +47,10 @@ export default function Chat({
 			toast.error(error.message);
 		},
 	});
+
+	const agentSlug = messages.at(0)?.metadata?.agent as string;
+
+	console.log(messages);
 
 	const [messagesLoading, setMessagesLoading] = React.useState(true);
 
@@ -58,11 +64,7 @@ export default function Chat({
 		);
 	}, [handleScroll]);
 
-	const lastAssistantMessage = messages.findLast(
-		(message) => message.role === "assistant",
-	);
-
-	const isLoading = status === "submitted";
+	const waitingLLMResponse = status === "submitted";
 
 	const handleSubmit = (form: ChatPromptForm) => {
 		console.log(form);
@@ -82,7 +84,7 @@ export default function Chat({
 
 		const chatTitle = getAgentName(form.agent?.slug);
 
-		queryClient.setQueryData(chatsQuery.queryKey, (prev) => [
+		queryClient.setQueryData<ChatType[]>(chatsQuery.queryKey, (prev) => [
 			{
 				id,
 				messages,
@@ -112,47 +114,16 @@ export default function Chat({
 					)}
 					onScroll={handleScroll}
 				>
-					{messages.map((message, messageIndex) => (
-						<React.Fragment key={`${message.id}-${messageIndex}`}>
-							{message.parts.map((part, partIndex) => {
-								switch (part.type) {
-									case "text":
-										return (
-											<Message
-												key={`${message.id}-${partIndex}`}
-												from={message.role}
-											>
-												<MessageContent>
-													<MessageResponse
-														mode={
-															lastAssistantMessage?.id === message.id
-																? "static"
-																: "streaming"
-														}
-														isAnimating={
-															lastAssistantMessage?.id === message.id &&
-															status === "streaming"
-														}
-													>
-														{part.text}
-													</MessageResponse>
-												</MessageContent>
-											</Message>
-										);
-									default:
-										return null;
-								}
-							})}
-						</React.Fragment>
-					))}
-					<div className={cn("hidden p-4", isLoading && "block")}>
-						<Loader2 className="animate-spin" />
-					</div>
-					<div className="h-40" />
+					<MessageList
+						agentSlug={agentSlug}
+						messages={messages}
+						messagesLoading={messagesLoading}
+						waitingLLMResponse={waitingLLMResponse}
+					/>
 				</ChatContainerContent>
 				<div className="absolute right-4 bottom-4 left-4">
 					<ChatPrompt
-						isLoading={isLoading || status === "streaming"}
+						isLoading={waitingLLMResponse || status === "streaming"}
 						disabledAgentSelection={!!messages.length}
 						onSubmit={handleSubmit}
 						onStop={stop}

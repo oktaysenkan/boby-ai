@@ -1,14 +1,23 @@
 "use client";
 
+import { getAgentName } from "@boby-ai/shared";
 import type { FileUIPart, UIMessage } from "ai";
 import {
 	ChevronLeftIcon,
 	ChevronRightIcon,
+	Loader2,
 	PaperclipIcon,
 	XIcon,
 } from "lucide-react";
+import Image from "next/image";
 import type { ComponentProps, HTMLAttributes, ReactElement } from "react";
-import { createContext, memo, useContext, useEffect, useState } from "react";
+import React, {
+	createContext,
+	memo,
+	useContext,
+	useEffect,
+	useState,
+} from "react";
 import { Streamdown } from "streamdown";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup, ButtonGroupText } from "@/components/ui/button-group";
@@ -443,3 +452,67 @@ export const MessageToolbar = ({
 		{children}
 	</div>
 );
+
+export type MessageListProps = {
+	messages: UIMessage[];
+	messagesLoading: boolean;
+	waitingLLMResponse: boolean;
+	agentSlug: string;
+};
+
+export const MessageList = ({
+	messages,
+	messagesLoading,
+	waitingLLMResponse,
+	agentSlug,
+}: MessageListProps) => {
+	return (
+		<React.Fragment>
+			{messages.map((message, messageIndex) => (
+				<React.Fragment key={`${message.id}-${messageIndex}`}>
+					{message.parts.map((part, partIndex) => {
+						switch (part.type) {
+							case "text":
+								return (
+									<Message
+										key={`${message.id}-${partIndex}`}
+										from={message.role}
+										className="relative"
+									>
+										<MessageContent className="gap-2">
+											<MessageResponse
+												mode={messagesLoading ? "static" : "streaming"}
+												isAnimating={messagesLoading}
+											>
+												{part.text}
+											</MessageResponse>
+											{message.role === "assistant" && agentSlug && (
+												<div className="mt-1 flex w-fit items-center gap-2 rounded-full bg-muted px-2 py-1">
+													<Image
+														className="rounded-full"
+														src={`/agents/${agentSlug}.jpeg`}
+														alt={getAgentName(agentSlug)}
+														width={24}
+														height={24}
+													/>
+													<span className="text-card-foreground text-sm">
+														{getAgentName(agentSlug)}
+													</span>
+												</div>
+											)}
+										</MessageContent>
+									</Message>
+								);
+							default:
+								return null;
+						}
+					})}
+				</React.Fragment>
+			))}
+			<div className={cn("hidden p-4", waitingLLMResponse && "block")}>
+				<Loader2 className="animate-spin" />
+			</div>
+			<div className="h-40" />
+		</React.Fragment>
+	);
+};
