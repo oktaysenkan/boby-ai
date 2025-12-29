@@ -90,7 +90,7 @@ const router = app
 			const systemPrompt =
 				agentDetail?.systemPrompt ?? "You are a helpful assistant.";
 
-			const chatTitle = getAgentName(agentSlug) ?? "Untitled Chat";
+			const chatTitle = agentDetail?.name ?? getAgentName(agentSlug);
 
 			if (!user) {
 				const response = createUIMessageStreamResponse({

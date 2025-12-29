@@ -80,7 +80,7 @@ export default function Chat({
 
 		window.history.replaceState(null, "", `/chat/${id}`);
 
-		const chatTitle = getAgentName(form.agent?.slug) ?? "Untitled Chat";
+		const chatTitle = getAgentName(form.agent?.slug);
 
 		queryClient.setQueryData(chatsQuery.queryKey, (prev) => [
 			{

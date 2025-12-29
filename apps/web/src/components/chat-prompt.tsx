@@ -102,6 +102,7 @@ export default function ChatPrompt({
 							placeholder="Ask anything"
 							className="max-h-[25vh] min-h-10 w-full resize-none border-0 border-none bg-transparent! p-0 text-foreground placeholder-muted-foreground shadow-none outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
 							rows={1}
+							autoFocus
 							onChange={handleInputChange}
 							onInput={handleInput}
 							onKeyDown={handleKeyDown}
