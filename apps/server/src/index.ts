@@ -162,6 +162,8 @@ const router = app
 
 		if (!user) throw new HTTPException(401, { message: "Unauthorized" });
 
+		console.log(id, user.id);
+
 		const result = await db.query.chat.findFirst({
 			where: and(eq(schema.chat.id, id), eq(schema.chat.userId, user.id)),
 		});
@@ -185,15 +187,6 @@ const router = app
 			.from(schema.agent);
 
 		return c.json(result);
-	})
-	.get("/protected", (c) => {
-		const user = c.get("user");
-
-		if (!user) throw new HTTPException(401, { message: "Unauthorized" });
-
-		return c.json({
-			message: "Protected route",
-		});
 	});
 
 app.onError(async (error, c) => {

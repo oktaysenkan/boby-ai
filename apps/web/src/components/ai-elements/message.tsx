@@ -6,6 +6,7 @@ import {
 	ChevronLeftIcon,
 	ChevronRightIcon,
 	Loader2,
+	MessageSquareIcon,
 	PaperclipIcon,
 	XIcon,
 } from "lucide-react";
@@ -21,6 +22,13 @@ import React, {
 import { Streamdown } from "streamdown";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup, ButtonGroupText } from "@/components/ui/button-group";
+import {
+	Empty,
+	EmptyDescription,
+	EmptyHeader,
+	EmptyMedia,
+	EmptyTitle,
+} from "@/components/ui/empty";
 import {
 	Tooltip,
 	TooltipContent,
@@ -466,6 +474,22 @@ export const MessageList = ({
 	waitingLLMResponse,
 	agentSlug,
 }: MessageListProps) => {
+	if (messages.length === 0) {
+		return (
+			<Empty className="absolute inset-0 flex w-full items-center justify-center">
+				<EmptyHeader>
+					<EmptyMedia variant="icon">
+						<MessageSquareIcon />
+					</EmptyMedia>
+					<EmptyTitle>No messages yet</EmptyTitle>
+					<EmptyDescription>
+						Start a conversation by clicking the button below.
+					</EmptyDescription>
+				</EmptyHeader>
+			</Empty>
+		);
+	}
+
 	return (
 		<React.Fragment>
 			{messages.map((message, messageIndex) => (

@@ -50,8 +50,6 @@ export default function Chat({
 
 	const agentSlug = messages.at(0)?.metadata?.agent as string;
 
-	console.log(messages);
-
 	const [messagesLoading, setMessagesLoading] = React.useState(true);
 
 	const handleScroll = useDebounceCallback(() => {

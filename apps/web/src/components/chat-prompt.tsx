@@ -50,6 +50,7 @@ export default function ChatPrompt({
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		onSubmit({ prompt: input, agent });
+		setInput("");
 	};
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -93,7 +94,6 @@ export default function ChatPrompt({
 			<div className="flex w-full justify-center pb-2">
 				<ScrollButton variant="secondary" size="icon-sm" />
 			</div>
-
 			<div className="overflow-hidden rounded-2xl border border-border bg-card">
 				<div className="grow px-3 pt-3 pb-4">
 					<form onSubmit={handleSubmit}>
@@ -109,7 +109,6 @@ export default function ChatPrompt({
 						/>
 					</form>
 				</div>
-
 				<div className="mb-2 flex items-center justify-between px-2">
 					<div className="flex items-center gap-1">
 						{!disabledAgentSelection && (
@@ -141,7 +140,6 @@ export default function ChatPrompt({
 							</DropdownMenu>
 						)}
 					</div>
-
 					<div>
 						{isLoading ? (
 							<Button

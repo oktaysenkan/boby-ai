@@ -6,11 +6,11 @@ const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
 	const session = await authClient.getSession({
 		fetchOptions: {
 			headers: await headers(),
-			throw: true,
+			throw: false,
 		},
 	});
 
-	if (session?.user) {
+	if (session?.data?.user) {
 		throw redirect("/");
 	}
 

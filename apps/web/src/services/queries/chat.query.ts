@@ -7,11 +7,10 @@ export const chatQuery = (id: string) =>
 		queryFn: async () => {
 			const response = await rpcClient.chat[":id"].$get({ param: { id } });
 
-			if (!response.ok) {
-				throw new Error(response.statusText);
-			}
+			if (!response.ok) throw new Error(response.statusText);
 
 			const data = await response.json();
+
 			return data;
 		},
 	});

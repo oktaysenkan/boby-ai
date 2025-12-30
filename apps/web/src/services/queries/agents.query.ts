@@ -12,6 +12,8 @@ export const agentsQuery = queryOptions({
 	queryFn: async () => {
 		const response = await rpcClient.agents.$get();
 
+		if (!response.ok) throw new Error(response.statusText);
+
 		const data = await response.json();
 
 		return data;

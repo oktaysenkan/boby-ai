@@ -11,6 +11,7 @@ export default async function ChatPage({
 	const { id } = await params;
 
 	const queryClient = getQueryClient();
+
 	const chat = await queryClient.fetchQuery(chatQuery(id));
 
 	return <Chat id={id} messages={chat?.messages as unknown as UIMessage[]} />;

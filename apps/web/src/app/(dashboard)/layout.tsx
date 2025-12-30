@@ -19,20 +19,20 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
 	const session = await authClient.getSession({
 		fetchOptions: {
 			headers: await headers(),
-			throw: true,
+			throw: false,
 		},
 	});
 
 	await queryClient.fetchQuery(chatsQuery);
 
-	if (!session?.user) {
+	if (!session?.data?.user) {
 		throw redirect("/login");
 	}
 
 	return (
 		<HydrationBoundary state={dehydrate(queryClient)}>
 			<SidebarProvider defaultOpen={defaultOpen}>
-				<AppSidebar session={session} />
+				<AppSidebar session={session.data} />
 				<SidebarInset className="h-screen overflow-x-hidden">
 					<header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b-[0.5px] bg-background">
 						<div className="flex items-center gap-2 px-4">

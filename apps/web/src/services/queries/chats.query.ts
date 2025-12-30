@@ -12,6 +12,8 @@ export const chatsQuery = queryOptions({
 	queryFn: async () => {
 		const response = await rpcClient.chats.$get();
 
+		if (!response.ok) throw new Error(response.statusText);
+
 		const data = await response.json();
 
 		return data;
