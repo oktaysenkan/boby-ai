@@ -135,7 +135,6 @@ const Register = () => {
                   <FieldLabel htmlFor={field.name}>Name</FieldLabel>
                   <Input
                     {...field}
-                    id={field.name}
                     aria-invalid={fieldState.invalid}
                     type="text"
                     autoComplete="name"
@@ -155,7 +154,6 @@ const Register = () => {
                   <FieldLabel htmlFor={field.name}>Email</FieldLabel>
                   <Input
                     {...field}
-                    id={field.name}
                     aria-invalid={fieldState.invalid}
                     type="email"
                     autoComplete="email"

@@ -111,7 +111,6 @@ export default function ChatPrompt({
               render={({ field }) => (
                 <Textarea
                   {...field}
-                  name="prompt"
                   placeholder="Ask anything"
                   className="max-h-[15vh] min-h-10 w-full resize-none border-0 border-none bg-transparent! p-0 text-foreground placeholder-muted-foreground shadow-none outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
                   rows={1}

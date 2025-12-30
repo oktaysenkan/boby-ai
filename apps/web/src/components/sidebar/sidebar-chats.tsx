@@ -8,12 +8,17 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { chatsQuery } from "@/services/queries/chats.query";
 
 export function SidebarChats() {
-  const { data: chats } = useQuery(chatsQuery);
+  const isMobile = useIsMobile();
   const pathname = usePathname();
+  const { setOpenMobile } = useSidebar();
+
+  const { data: chats } = useQuery(chatsQuery);
 
   const displayedChats = chats?.slice(0, 10);
 
@@ -26,6 +31,7 @@ export function SidebarChats() {
             <SidebarMenuButton
               asChild
               isActive={pathname === `/chat/${item.id}`}
+              onClick={() => isMobile && setOpenMobile(false)}
             >
               <Link href={`/chat/${item.id}`}>
                 <span>{item.title}</span>
