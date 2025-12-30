@@ -1,3 +1,4 @@
+import { Streamdown } from "streamdown";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Tooltip,
@@ -6,7 +7,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { Markdown } from "./markdown";
 
 export type MessageProps = {
   children: React.ReactNode;
@@ -48,7 +48,7 @@ export type MessageContentProps = {
   children: React.ReactNode;
   markdown?: boolean;
   className?: string;
-} & React.ComponentProps<typeof Markdown> &
+} & React.ComponentProps<typeof Streamdown> &
   React.HTMLProps<HTMLDivElement>;
 
 const MessageContent = ({
@@ -63,9 +63,9 @@ const MessageContent = ({
   );
 
   return markdown ? (
-    <Markdown className={classNames} {...props}>
+    <Streamdown className={classNames} {...props}>
       {children as string}
-    </Markdown>
+    </Streamdown>
   ) : (
     <div className={classNames} {...props}>
       {children}

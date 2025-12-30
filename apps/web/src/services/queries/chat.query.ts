@@ -5,7 +5,7 @@ export const chatQuery = (id: string) =>
   queryOptions({
     queryKey: ["chat", id],
     queryFn: async () => {
-      const response = await rpcClient.chat[":id"].$get({ param: { id } });
+      const response = await rpcClient.chats[":id"].$get({ param: { id } });
 
       if (!response.ok) throw new Error(response.statusText);
 

@@ -23,6 +23,11 @@
       "@/*": ["./src/*"]
     }
   },
+  "references": [
+    {
+      "path": "../server"
+    }
+  ],
   "include": [
     "./next-env.d.ts",
     "./**/*.ts",

@@ -15,6 +15,13 @@
       "when": 1766986490223,
       "tag": "0001_sparkling_metal_master",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1767101654468,
+      "tag": "0002_modern_misty_knight",
+      "breakpoints": true
     }
   ]
 }
