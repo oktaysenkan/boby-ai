@@ -1,3 +1,3 @@
-export { default as agent } from "./agent";
-export { default as chat } from "./chat";
-export { default as health } from "./health";
+export { default as agent } from "./agent.router";
+export { default as chat } from "./chat.router";
+export { default as health } from "./health.router";

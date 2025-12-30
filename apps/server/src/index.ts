@@ -1,9 +1,9 @@
 import "dotenv/config";
 import { auth } from "@boby-ai/auth";
 import { Hono } from "hono";
-import { errorHandler } from "@/error.handler";
 import * as middlewares from "@/middlewares";
 import * as routers from "@/routers";
+import { handlers } from "@/utils";
 
 const app = new Hono();
 
@@ -19,6 +19,6 @@ const router = app
 
 export type AppType = typeof router;
 
-app.onError(errorHandler);
+app.onError(handlers.error);
 
 export default app;
