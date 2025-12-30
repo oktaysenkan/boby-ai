@@ -18,6 +18,7 @@ const router = app
   .route("agents", routers.agent);
 
 app.onError(handlers.error);
+app.notFound(handlers.notFound);
 
 export type AppType = typeof router;
 

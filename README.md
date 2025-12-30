@@ -153,3 +153,61 @@ boby-ai/
 ### Code Quality
 
 - `bun run check` - Run Biome formatter and linter (checks and fixes code)
+
+## Deployment
+
+### Build the Docker Image
+
+Build the Docker image for the server application:
+
+```sh
+docker build \
+  --platform linux/amd64 \
+  -t boby-ai-api:v1 \
+  -f apps/server/Dockerfile \
+  --load \
+  .
+```
+
+### Tag the Image for Google Artifact Registry
+
+Tag the locally built image with the full registry path:
+
+```sh
+docker tag boby-ai-api:v1 \
+europe-central2-docker.pkg.dev/dev-test-397700/boby-ai-api/boby-ai-api:v1
+```
+
+### Push the Image to the Registry
+
+Push the tagged image to Google Artifact Registry:
+
+```sh
+docker push \
+europe-central2-docker.pkg.dev/dev-test-397700/boby-ai-api/boby-ai-api:v1
+```
+
+### Alternative: Build and Push in One Command
+
+You can combine the build and push steps into a single command:
+
+```sh
+docker build \
+  --platform linux/amd64 \
+  -t europe-central2-docker.pkg.dev/dev-test-397700/boby-ai-api/boby-ai-api:v1 \
+  -f apps/server/Dockerfile \
+  --push \
+  .
+```
+
+### Deploy to Google Cloud Run
+
+Deploy the containerized application to Google Cloud Run:
+
+```sh
+gcloud run deploy boby-ai-api \
+  --image europe-central2-docker.pkg.dev/dev-test-397700/boby-ai-api/boby-ai-api:v1 \
+  --region europe-central2 \
+  --platform managed \
+  --allow-unauthenticated
+```

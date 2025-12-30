@@ -61,7 +61,10 @@ const Login = () => {
       },
       {
         onRequest: () => setIsLoading(true),
-        onSettled: () => setIsLoading(false),
+        onError: (error) => {
+          setIsLoading(false);
+          toast.error(error.error.message || error.error.statusText);
+        },
       },
     );
   };
