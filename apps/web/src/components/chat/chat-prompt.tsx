@@ -1,5 +1,6 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
 	Brain,
 	ChevronDown,
@@ -11,7 +12,8 @@ import {
 	SendHorizontal,
 	Square,
 } from "lucide-react";
-import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import z from "zod";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -22,12 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScrollButton } from "@/components/ui/scroll-button";
 import { Textarea } from "@/components/ui/textarea";
-import { type Agent, useAgents } from "@/services/queries/agents.query";
-
-export type ChatPromptForm = {
-	prompt: string;
-	agent?: Agent;
-};
+import { useAgents } from "@/services/queries/agents.query";
 
 export type ChatPromptProps = {
 	disabledAgentSelection?: boolean;
@@ -36,40 +33,55 @@ export type ChatPromptProps = {
 	onStop?: () => void;
 };
 
+const formSchema = z.object({
+	prompt: z.string().min(1),
+	agent: z
+		.object({
+			slug: z.string(),
+			name: z.string(),
+		})
+		.optional(),
+});
+
+export type ChatPromptForm = z.infer<typeof formSchema>;
+
 export default function ChatPrompt({
 	disabledAgentSelection = false,
 	isLoading = false,
 	onSubmit,
 	onStop,
 }: ChatPromptProps) {
-	const [input, setInput] = useState("");
-	const [agent, setAgent] = useState<Agent>();
-
 	const { data: agents } = useAgents();
 
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		onSubmit({ prompt: input, agent });
-		setInput("");
+	const form = useForm<z.infer<typeof formSchema>>({
+		resolver: zodResolver(formSchema),
+		defaultValues: {
+			prompt: "",
+			agent: undefined,
+		},
+	});
+
+	const agent = form.watch("agent");
+	const prompt = form.watch("prompt");
+
+	const handleSubmit = (data: z.infer<typeof formSchema>) => {
+		onSubmit(data);
+		form.reset();
 	};
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+		// Send form on enter key instead of new line
 		if (e.key !== "Enter" || e.shiftKey) return;
 
 		e.preventDefault();
 
-		handleSubmit(e);
-		setInput("");
+		handleSubmit(form.getValues());
 	};
 
 	const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		const target = e.target as HTMLTextAreaElement;
 		target.style.height = "auto";
 		target.style.height = target.scrollHeight + "px";
-	};
-
-	const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		setInput(e.target.value);
 	};
 
 	const handleStop = () => {
@@ -96,16 +108,22 @@ export default function ChatPrompt({
 			</div>
 			<div className="overflow-hidden rounded-2xl border border-border bg-card">
 				<div className="grow px-3 pt-3 pb-4">
-					<form onSubmit={handleSubmit}>
-						<Textarea
-							value={input}
-							placeholder="Ask anything"
-							className="max-h-[25vh] min-h-10 w-full resize-none border-0 border-none bg-transparent! p-0 text-foreground placeholder-muted-foreground shadow-none outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
-							rows={1}
-							autoFocus
-							onChange={handleInputChange}
-							onInput={handleInput}
-							onKeyDown={handleKeyDown}
+					<form onSubmit={form.handleSubmit(handleSubmit)}>
+						<Controller
+							control={form.control}
+							name="prompt"
+							render={({ field }) => (
+								<Textarea
+									{...field}
+									name="prompt"
+									placeholder="Ask anything"
+									className="max-h-[25vh] min-h-10 w-full resize-none border-0 border-none bg-transparent! p-0 text-foreground placeholder-muted-foreground shadow-none outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+									rows={1}
+									autoFocus
+									onInput={handleInput}
+									onKeyDown={handleKeyDown}
+								/>
+							)}
 						/>
 					</form>
 				</div>
@@ -129,7 +147,7 @@ export default function ChatPrompt({
 										{agents?.map((agent) => (
 											<DropdownMenuItem
 												key={agent.name}
-												onClick={() => setAgent(agent)}
+												onClick={() => form.setValue("agent", agent)}
 											>
 												{getAgentIcon(agent.slug)}
 												{agent.name}
@@ -143,7 +161,7 @@ export default function ChatPrompt({
 					<div>
 						{isLoading ? (
 							<Button
-								type="submit"
+								type="button"
 								size="icon"
 								className="rounded-full bg-primary p-0 disabled:cursor-not-allowed disabled:opacity-50"
 								onClick={handleStop}
@@ -153,10 +171,9 @@ export default function ChatPrompt({
 						) : (
 							<Button
 								type="submit"
-								disabled={!input.length || isLoading}
+								disabled={!prompt.length || isLoading}
 								size="icon"
 								className="rounded-full bg-primary p-0 disabled:cursor-not-allowed disabled:opacity-50"
-								onClick={handleSubmit}
 							>
 								<SendHorizontal className="fill-primary" />
 							</Button>

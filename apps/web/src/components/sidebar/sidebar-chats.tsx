@@ -15,11 +15,13 @@ export function SidebarChats() {
 	const { data: chats } = useQuery(chatsQuery);
 	const pathname = usePathname();
 
+	const displayedChats = chats?.slice(0, 10);
+
 	return (
 		<SidebarGroup className="group-data-[collapsible=icon]:hidden">
 			<SidebarGroupLabel>Your chats</SidebarGroupLabel>
 			<SidebarMenu>
-				{chats?.map((item) => (
+				{displayedChats?.map((item) => (
 					<SidebarMenuItem key={item.id}>
 						<SidebarMenuButton
 							asChild

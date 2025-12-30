@@ -1,11 +1,11 @@
 "use client";
 import Link from "next/link";
 import type * as React from "react";
-import BobyIcon from "@/components/icons/boby";
-import { SidebarChats } from "@/components/sidebar-chats";
-import { SidebarNavigation } from "@/components/sidebar-navigation";
-import { SidebarUser } from "@/components/sidebar-user";
-import ThemeSwitcher from "@/components/theme-switcher";
+import Logo from "@/components/icons/logo";
+import { SidebarChats } from "@/components/sidebar/sidebar-chats";
+import { SidebarNavigation } from "@/components/sidebar/sidebar-navigation";
+import { SidebarUser } from "@/components/sidebar/sidebar-user";
+import ThemeSwitcher from "@/components/sidebar/theme-switcher";
 import { Button } from "@/components/ui/button";
 import {
 	Sidebar,
@@ -25,7 +25,7 @@ export function AppSidebar({ session, ...props }: AppSidebarProps) {
 			<SidebarHeader className="flex w-full flex-row items-center justify-between">
 				<Button variant="link" size="icon" asChild>
 					<Link href="/">
-						<BobyIcon className="size-8" />
+						<Logo className="size-8" />
 					</Link>
 				</Button>
 				<ThemeSwitcher />

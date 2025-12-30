@@ -1,8 +1,8 @@
 "use client";
 
-import QueryProvider from "./query-provider";
-import ThemeProvider from "./theme-provider";
-import { Toaster } from "./ui/sonner";
+import { Toaster } from "../ui/sonner";
+import QueryProvider from "./query.provider";
+import ThemeProvider from "./theme.provider";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
 	return (

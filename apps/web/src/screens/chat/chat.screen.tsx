@@ -1,15 +1,16 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
+import type { UIMessage } from "@boby-ai/shared";
 import { createId, getAgentName } from "@boby-ai/shared";
-import { DefaultChatTransport, type UIMessage } from "ai";
+import { DefaultChatTransport } from "ai";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
 import { useDebounceCallback } from "usehooks-ts";
 import { z } from "zod";
 import { MessageList } from "@/components/ai-elements/message";
-import ChatPrompt, { type ChatPromptForm } from "@/components/chat-prompt";
+import ChatPrompt, { type ChatPromptForm } from "@/components/chat/chat-prompt";
 import {
 	ChatContainerContent,
 	ChatContainerRoot,
@@ -26,14 +27,14 @@ export type ChatProps = {
 	messages?: UIMessage[];
 };
 
-export default function Chat({
+export default function ChatScreen({
 	id: initialId,
 	messages: initialMessages,
 }: ChatProps) {
 	const router = useRouter();
 	const queryClient = getQueryClient();
 
-	const { id, messages, status, sendMessage, stop } = useChat({
+	const { id, messages, status, sendMessage, stop } = useChat<UIMessage>({
 		id: initialId ?? createId(),
 		messages: initialMessages ?? [],
 		messageMetadataSchema: z.object({
@@ -48,7 +49,7 @@ export default function Chat({
 		},
 	});
 
-	const agentSlug = messages.at(0)?.metadata?.agent as string;
+	const agentSlug = messages.at(0)?.metadata?.agent;
 
 	const [messagesLoading, setMessagesLoading] = React.useState(true);
 
@@ -65,8 +66,6 @@ export default function Chat({
 	const waitingLLMResponse = status === "submitted";
 
 	const handleSubmit = (form: ChatPromptForm) => {
-		console.log(form);
-
 		sendMessage({
 			text: form.prompt,
 			metadata: {
@@ -78,6 +77,9 @@ export default function Chat({
 
 		if (isAlreadyNavigated) return;
 
+		// We don't want to use nextjs router.push
+		// because user should be same chat page because of stream response
+		// ChatGPT does this too
 		window.history.replaceState(null, "", `/chat/${id}`);
 
 		const chatTitle = getAgentName(form.agent?.slug);

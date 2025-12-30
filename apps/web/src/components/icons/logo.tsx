@@ -1,4 +1,4 @@
-const BobyIcon = (props: React.SVGProps<SVGSVGElement>) => {
+const Logo = (props: React.SVGProps<SVGSVGElement>) => {
 	return (
 		<svg
 			aria-hidden="true"
@@ -23,4 +23,4 @@ const BobyIcon = (props: React.SVGProps<SVGSVGElement>) => {
 	);
 };
 
-export default BobyIcon;
+export default Logo;

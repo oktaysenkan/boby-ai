@@ -465,7 +465,7 @@ export type MessageListProps = {
 	messages: UIMessage[];
 	messagesLoading: boolean;
 	waitingLLMResponse: boolean;
-	agentSlug: string;
+	agentSlug?: string;
 };
 
 export const MessageList = ({

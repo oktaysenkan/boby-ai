@@ -1,7 +1,5 @@
-"use client";
+import ChatScreen from "@/screens/chat/chat.screen";
 
-import Chat from "@/components/chat";
-
-export default function NewChat() {
-	return <Chat />;
+export default function NewChatPage() {
+	return <ChatScreen />;
 }

@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { auth } from "@boby-ai/auth";
 import { and, db, desc, eq, schema } from "@boby-ai/db";
-import { getAgentName } from "@boby-ai/shared";
+import { getAgentName, type UIMessage } from "@boby-ai/shared";
 import { zValidator } from "@hono/zod-validator";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import {
@@ -9,7 +9,6 @@ import {
 	createUIMessageStream,
 	createUIMessageStreamResponse,
 	streamText,
-	type UIMessage,
 } from "ai";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
@@ -162,15 +161,16 @@ const router = app
 
 		if (!user) throw new HTTPException(401, { message: "Unauthorized" });
 
-		console.log(id, user.id);
-
 		const result = await db.query.chat.findFirst({
 			where: and(eq(schema.chat.id, id), eq(schema.chat.userId, user.id)),
 		});
 
 		if (!result) throw new HTTPException(404, { message: "Chat not found" });
 
-		return c.json(result);
+		return c.json({
+			...result,
+			messages: result.messages as UIMessage[],
+		});
 	})
 	.get("/agents", async (c) => {
 		const user = c.get("user");

@@ -1,7 +1,7 @@
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import {
 	SidebarInset,
 	SidebarProvider,
@@ -23,11 +23,11 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
 		},
 	});
 
-	await queryClient.fetchQuery(chatsQuery);
-
 	if (!session?.data?.user) {
 		throw redirect("/login");
 	}
+
+	await queryClient.fetchQuery(chatsQuery);
 
 	return (
 		<HydrationBoundary state={dehydrate(queryClient)}>
