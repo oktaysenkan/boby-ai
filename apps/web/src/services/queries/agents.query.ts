@@ -8,18 +8,18 @@ export type AgentsResponse = InferResponseType<typeof request>;
 export type Agent = AgentsResponse[number];
 
 export const agentsQuery = queryOptions({
-	queryKey: ["agents"],
-	queryFn: async () => {
-		const response = await rpcClient.agents.$get();
+  queryKey: ["agents"],
+  queryFn: async () => {
+    const response = await rpcClient.agents.$get();
 
-		if (!response.ok) throw new Error(response.statusText);
+    if (!response.ok) throw new Error(response.statusText);
 
-		const data = await response.json();
+    const data = await response.json();
 
-		return data;
-	},
+    return data;
+  },
 });
 
 export const useAgents = () => {
-	return useQuery(agentsQuery);
+  return useQuery(agentsQuery);
 };

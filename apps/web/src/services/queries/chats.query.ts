@@ -8,18 +8,18 @@ export type ChatsResponse = InferResponseType<typeof request>;
 export type Chat = ChatsResponse[number];
 
 export const chatsQuery = queryOptions({
-	queryKey: ["chats"],
-	queryFn: async () => {
-		const response = await rpcClient.chats.$get();
+  queryKey: ["chats"],
+  queryFn: async () => {
+    const response = await rpcClient.chats.$get();
 
-		if (!response.ok) throw new Error(response.statusText);
+    if (!response.ok) throw new Error(response.statusText);
 
-		const data = await response.json();
+    const data = await response.json();
 
-		return data;
-	},
+    return data;
+  },
 });
 
 export const useChat = () => {
-	return useQuery(chatsQuery);
+  return useQuery(chatsQuery);
 };

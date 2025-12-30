@@ -6,25 +6,25 @@ import Providers from "@/components/providers/providers";
 import "../index.css";
 
 const inter = Inter({
-	variable: "--font-geist-sans",
-	subsets: ["latin"],
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-	title: "Boby AI",
-	description: "Boby AI",
+  title: "Boby AI",
+  description: "Boby AI",
 };
 
 export default function RootLayout({
-	children,
+  children,
 }: Readonly<{
-	children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-	return (
-		<html lang="en" suppressHydrationWarning>
-			<body className={`${inter.variable} antialiased`}>
-				<Providers>{children}</Providers>
-			</body>
-		</html>
-	);
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.variable} antialiased`}>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  );
 }

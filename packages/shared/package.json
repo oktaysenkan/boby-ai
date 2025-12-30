@@ -1,21 +1,21 @@
 {
-	"name": "@boby-ai/shared",
-	"type": "module",
-	"exports": {
-		".": {
-			"default": "./src/index.ts"
-		},
-		"./*": {
-			"default": "./src/*.ts"
-		}
-	},
-	"scripts": {},
-	"devDependencies": {
-		"typescript": "catalog:",
-		"@boby-ai/config": "workspace:*"
-	},
-	"dependencies": {
-		"ai": "^6.0.3",
-		"nanoid": "^5.1.6"
-	}
+  "name": "@boby-ai/shared",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "devDependencies": {
+    "typescript": "catalog:",
+    "@boby-ai/config": "workspace:*"
+  },
+  "dependencies": {
+    "ai": "^6.0.3",
+    "nanoid": "^5.1.6"
+  }
 }
