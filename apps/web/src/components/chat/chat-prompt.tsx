@@ -77,7 +77,7 @@ export default function ChatPrompt({
 
     e.preventDefault();
 
-    if (!prompt.length || isLoading) return;
+    if (isLoading) return;
 
     form.handleSubmit(handleSubmit)();
   };
