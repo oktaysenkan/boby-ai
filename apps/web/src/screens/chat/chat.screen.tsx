@@ -34,20 +34,21 @@ export default function ChatScreen({
   const router = useRouter();
   const queryClient = getQueryClient();
 
-  const { id, messages, status, sendMessage, stop } = useChat<UIMessage>({
-    id: initialId ?? createId(),
-    messages: initialMessages ?? [],
-    messageMetadataSchema: z.object({
-      agent: z.string(),
-    }),
-    transport: new DefaultChatTransport({
-      api: `${process.env.NEXT_PUBLIC_SERVER_URL}/chat`,
-      credentials: "include",
-    }),
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+  const { id, messages, status, sendMessage, stop, regenerate } =
+    useChat<UIMessage>({
+      id: initialId ?? createId(),
+      messages: initialMessages ?? [],
+      messageMetadataSchema: z.object({
+        agent: z.string(),
+      }),
+      transport: new DefaultChatTransport({
+        api: `${process.env.NEXT_PUBLIC_SERVER_URL}/chats`,
+        credentials: "include",
+      }),
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
 
   const agentSlug = messages.at(0)?.metadata?.agent;
 
@@ -119,6 +120,7 @@ export default function ChatScreen({
             messages={messages}
             messagesLoading={messagesLoading}
             waitingLLMResponse={waitingLLMResponse}
+            onRegenerate={(messageId) => regenerate({ messageId })}
           />
         </ChatContainerContent>
         <div className="absolute right-4 bottom-4 left-4">

@@ -14,7 +14,7 @@ const PUBLIC_PATHS: URL[] = ["/", "/health"];
 const IGNORED_PATHS: IgnoredPath[] = [
   // /chat POST request should be handled by stream response not json response
   {
-    path: "/chat",
+    path: "/chats",
     methods: ["POST"],
   },
   // better-auth API should be ignored

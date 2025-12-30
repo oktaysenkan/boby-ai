@@ -17,8 +17,8 @@ const router = app
   .route("chats", routers.chat)
   .route("agents", routers.agent);
 
-export type AppType = typeof router;
-
 app.onError(handlers.error);
+
+export type AppType = typeof router;
 
 export default app;

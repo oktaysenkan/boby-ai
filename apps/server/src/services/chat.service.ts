@@ -1,10 +1,9 @@
 import { and, db, desc, eq, schema } from "@boby-ai/db";
-import { user } from "@boby-ai/db/schema/auth";
 import type { UIMessage } from "@boby-ai/shared";
 
-export const getChat = async (id: string) => {
+export const getChat = async (id: string, userId: string) => {
   const chat = await db.query.chat.findFirst({
-    where: and(eq(schema.chat.id, id), eq(schema.chat.userId, user.id)),
+    where: and(eq(schema.chat.id, id), eq(schema.chat.userId, userId)),
   });
 
   return chat;

@@ -73,17 +73,12 @@ const chatRouter = new Hono()
       });
     },
   )
-  .get("/", async (c) => {
+  .get("/:id", async (c) => {
     const user = c.get("user");
 
-    const chats = await services.chat.getChats(user.id);
-
-    return c.json(chats);
-  })
-  .get("/:id", async (c) => {
     const { id } = c.req.param();
 
-    const result = await services.chat.getChat(id);
+    const result = await services.chat.getChat(id, user.id);
 
     if (!result) throw new HTTPException(404, { message: "Chat not found" });
 
@@ -91,6 +86,13 @@ const chatRouter = new Hono()
       ...result,
       messages: result.messages as UIMessage[],
     });
+  })
+  .get("/", async (c) => {
+    const user = c.get("user");
+
+    const chats = await services.chat.getChats(user.id);
+
+    return c.json(chats);
   });
 
 export default chatRouter;

@@ -70,18 +70,14 @@ export default function ChatPrompt({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    // Send form on enter key instead of new line
+    // We use send form on enter key instead of new line
+    // because we want to send the form when the user presses enter
+    // and not when they press shift + enter
     if (e.key !== "Enter" || e.shiftKey) return;
 
     e.preventDefault();
 
     handleSubmit(form.getValues());
-  };
-
-  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const target = e.target as HTMLTextAreaElement;
-    target.style.height = "auto";
-    target.style.height = `${target.scrollHeight}px`;
   };
 
   const handleStop = () => {
@@ -102,13 +98,13 @@ export default function ChatPrompt({
   };
 
   return (
-    <div className="relative mx-auto max-w-xl">
-      <div className="flex w-full justify-center pb-2">
-        <ScrollButton variant="secondary" size="icon-sm" />
-      </div>
-      <div className="overflow-hidden rounded-2xl border border-border bg-card">
-        <div className="grow px-3 pt-3 pb-4">
-          <form onSubmit={form.handleSubmit(handleSubmit)}>
+    <form onSubmit={form.handleSubmit(handleSubmit)}>
+      <div className="relative mx-auto max-w-xl">
+        <div className="flex w-full justify-center pb-2">
+          <ScrollButton variant="secondary" size="icon-sm" />
+        </div>
+        <div className="overflow-hidden rounded-2xl border border-border bg-card">
+          <div className="grow px-3 pt-3 pb-4">
             <Controller
               control={form.control}
               name="prompt"
@@ -117,70 +113,69 @@ export default function ChatPrompt({
                   {...field}
                   name="prompt"
                   placeholder="Ask anything"
-                  className="max-h-[25vh] min-h-10 w-full resize-none border-0 border-none bg-transparent! p-0 text-foreground placeholder-muted-foreground shadow-none outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="max-h-[15vh] min-h-10 w-full resize-none border-0 border-none bg-transparent! p-0 text-foreground placeholder-muted-foreground shadow-none outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
                   rows={1}
                   autoFocus
-                  onInput={handleInput}
                   onKeyDown={handleKeyDown}
                 />
               )}
             />
-          </form>
-        </div>
-        <div className="mb-2 flex items-center justify-between px-2">
-          <div className="flex items-center gap-1">
-            {!disabledAgentSelection && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={disabledAgentSelection}
-                  >
-                    {getAgentIcon(agent?.slug)}
-                    <span>{agent?.name ?? "Agent"}</span>
-                    <ChevronDown />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
-                  <DropdownMenuGroup className="space-y-1">
-                    {agents?.map((agent) => (
-                      <DropdownMenuItem
-                        key={agent.name}
-                        onClick={() => form.setValue("agent", agent)}
-                      >
-                        {getAgentIcon(agent.slug)}
-                        {agent.name}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
           </div>
-          <div>
-            {isLoading ? (
-              <Button
-                type="button"
-                size="icon"
-                className="rounded-full bg-primary p-0 disabled:cursor-not-allowed disabled:opacity-50"
-                onClick={handleStop}
-              >
-                <Square className="fill-primary" />
-              </Button>
-            ) : (
-              <Button
-                type="submit"
-                disabled={!prompt.length || isLoading}
-                size="icon"
-                className="rounded-full bg-primary p-0 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <SendHorizontal className="fill-primary" />
-              </Button>
-            )}
+          <div className="mb-2 flex items-center justify-between px-2">
+            <div className="flex items-center gap-1">
+              {!disabledAgentSelection && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={disabledAgentSelection}
+                    >
+                      {getAgentIcon(agent?.slug)}
+                      <span>{agent?.name ?? "Agent"}</span>
+                      <ChevronDown />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    <DropdownMenuGroup className="space-y-1">
+                      {agents?.map((agent) => (
+                        <DropdownMenuItem
+                          key={agent.name}
+                          onClick={() => form.setValue("agent", agent)}
+                        >
+                          {getAgentIcon(agent.slug)}
+                          {agent.name}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+            </div>
+            <div>
+              {isLoading ? (
+                <Button
+                  type="button"
+                  size="icon"
+                  className="rounded-full bg-primary p-0 disabled:cursor-not-allowed disabled:opacity-50"
+                  onClick={handleStop}
+                >
+                  <Square className="fill-background" />
+                </Button>
+              ) : (
+                <Button
+                  type="submit"
+                  disabled={!prompt.length || isLoading}
+                  size="icon"
+                  className="rounded-full bg-primary p-0 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <SendHorizontal className="fill-background" />
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </form>
   );
 }
