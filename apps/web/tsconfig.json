@@ -14,12 +14,14 @@
     "verbatimModuleSyntax": true,
     "jsx": "react-jsx",
     "incremental": true,
+    "composite": true,
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
+      "~/*": ["../server/src/*"],
       "@/*": ["./src/*"]
     }
   },

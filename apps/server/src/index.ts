@@ -1,9 +1,9 @@
 import "dotenv/config";
 import { auth } from "@boby-ai/auth";
 import { Hono } from "hono";
-import * as middlewares from "@/middlewares";
-import * as routers from "@/routers";
-import { handlers } from "@/utils";
+import * as middlewares from "~/middlewares";
+import * as routers from "~/routers";
+import { handlers } from "~/utils";
 
 const app = new Hono();
 

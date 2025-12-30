@@ -3,8 +3,9 @@ import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { convertToModelMessages, safeValidateUIMessages, streamText } from "ai";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import * as services from "@/services";
-import { buildStreamingErrorResponse } from "@/utils/streaming";
+import * as services from "~/services";
+import type { HonoEnv } from "~/types/hono";
+import { buildStreamingErrorResponse } from "~/utils/streaming";
 
 const openRouterClient = createOpenRouter({
   apiKey: process.env.OPEN_ROUTER_API_KEY as string,
@@ -14,7 +15,7 @@ const chatModel = openRouterClient.chat(
   "google/gemini-2.5-flash-preview-09-2025",
 );
 
-const chatRouter = new Hono()
+const chatRouter = new Hono<HonoEnv>()
   .post("/", async (c) => {
     const user = c.get("user");
     const body = await c.req.json();

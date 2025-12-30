@@ -10,6 +10,9 @@
       "default": "./src/*.ts"
     }
   },
+  "imports": {
+    "@/*": "./src/*"
+  },
   "scripts": {
     "build": "tsdown",
     "check-types": "tsc -b",
