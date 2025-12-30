@@ -5,5 +5,3 @@ export type UIMessageMetadata = {
 };
 
 export type UIMessage = BaseUIMessage<UIMessageMetadata, UIDataTypes, UITools>;
-
-export const a = 1;

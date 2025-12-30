@@ -1,3 +1,4 @@
+import { formatError } from "@boby-ai/shared";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import type { InferResponseType } from "hono/client";
 import { rpcClient } from "@/lib/rpc-client";
@@ -12,9 +13,9 @@ export const agentsQuery = queryOptions({
   queryFn: async () => {
     const response = await rpcClient.agents.$get();
 
-    if (!response.ok) throw new Error(response.statusText);
-
     const data = await response.json();
+
+    if (!response.ok) throw new Error(formatError(data));
 
     return data;
   },

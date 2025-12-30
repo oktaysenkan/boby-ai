@@ -1,5 +1,6 @@
 "use client";
 
+import { formatError } from "@boby-ai/shared";
 import { AlertTriangle } from "lucide-react";
 import {
   Empty,
@@ -13,8 +14,6 @@ export type ErrorScreenProps = {
 };
 
 const ErrorScreen = ({ error }: ErrorScreenProps) => {
-  const errorMessage = typeof error === "string" ? error : error.message;
-
   return (
     <div className="flex h-screen items-center justify-center p-4">
       <Empty className="mx-auto max-w-md border border-destructive/30 bg-destructive/5">
@@ -26,7 +25,7 @@ const ErrorScreen = ({ error }: ErrorScreenProps) => {
             <AlertTriangle />
           </EmptyMedia>
           <EmptyTitle className="text-destructive">
-            {errorMessage ?? "An error occurred"}
+            {formatError(error)}
           </EmptyTitle>
         </EmptyHeader>
       </Empty>
