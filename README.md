@@ -175,7 +175,7 @@ Tag the locally built image with the full registry path:
 
 ```sh
 docker tag boby-ai-api:v1 \
-europe-central2-docker.pkg.dev/dev-test-397700/boby-ai-api/boby-ai-api:v1
+europe-west1-docker.pkg.dev/dev-test-397700/boby-ai-api/boby-ai-api:v1
 ```
 
 ### Push the Image to the Registry
@@ -184,7 +184,7 @@ Push the tagged image to Google Artifact Registry:
 
 ```sh
 docker push \
-europe-central2-docker.pkg.dev/dev-test-397700/boby-ai-api/boby-ai-api:v1
+europe-west1-docker.pkg.dev/dev-test-397700/boby-ai-api/boby-ai-api:v1
 ```
 
 ### Alternative: Build and Push in One Command
@@ -194,7 +194,7 @@ You can combine the build and push steps into a single command:
 ```sh
 docker build \
   --platform linux/amd64 \
-  -t europe-central2-docker.pkg.dev/dev-test-397700/boby-ai-api/boby-ai-api:v1 \
+  -t europe-west1-docker.pkg.dev/dev-test-397700/boby-ai-api/boby-ai-api:v1 \
   -f apps/server/Dockerfile \
   --push \
   .
@@ -206,8 +206,8 @@ Deploy the containerized application to Google Cloud Run:
 
 ```sh
 gcloud run deploy boby-ai-api \
-  --image europe-central2-docker.pkg.dev/dev-test-397700/boby-ai-api/boby-ai-api:v1 \
-  --region europe-central2 \
+  --image europe-west1-docker.pkg.dev/dev-test-397700/boby-ai-api/boby-ai-api:v1 \
+  --region europe-west1 \
   --platform managed \
   --allow-unauthenticated
 ```

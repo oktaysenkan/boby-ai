@@ -72,7 +72,7 @@ const Register = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
+    <div className="flex min-h-dvh items-center justify-center">
       <div className="flex flex-1 flex-col justify-center px-4 py-10 lg:px-6">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="flex items-center space-x-1.5">
@@ -96,7 +96,7 @@ const Register = () => {
           <div className="mt-8 flex flex-col items-center space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0">
             <Button
               variant="outline"
-              className="flex-1 items-center justify-center space-x-2 py-2"
+              className="w-full flex-1 items-center justify-center space-x-2 py-2"
               disabled={isLoading}
               onClick={() => handleSocialLogin("github")}
             >
@@ -105,7 +105,7 @@ const Register = () => {
             </Button>
             <Button
               variant="outline"
-              className="mt-2 flex-1 items-center justify-center space-x-2 py-2 sm:mt-0"
+              className="mt-2 w-full flex-1 items-center justify-center space-x-2 py-2 sm:mt-0"
               disabled={isLoading}
               onClick={() => handleSocialLogin("google")}
             >

@@ -15,7 +15,7 @@ export type ErrorScreenProps = {
 
 const ErrorScreen = ({ error }: ErrorScreenProps) => {
   return (
-    <div className="flex h-screen items-center justify-center p-4">
+    <div className="flex h-dvh items-center justify-center p-4">
       <Empty className="mx-auto max-w-md border border-destructive/30 bg-destructive/5">
         <EmptyHeader>
           <EmptyMedia

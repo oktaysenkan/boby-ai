@@ -8,11 +8,21 @@ export const auth = betterAuth({
     provider: "pg",
     schema: schema,
   }),
-  trustedOrigins: [process.env.CORS_ORIGIN || ""],
+  trustedOrigins: [
+    process.env.CORS_ORIGIN || "",
+    process.env.COOKIE_DOMAIN || "",
+  ].filter(Boolean),
   emailAndPassword: {
     enabled: true,
   },
   advanced: {
+    crossSubDomainCookies: {
+      enabled: process.env.NODE_ENV === "production",
+      domain:
+        process.env.NODE_ENV === "production"
+          ? process.env.COOKIE_DOMAIN
+          : undefined,
+    },
     defaultCookieAttributes: {
       sameSite: "none",
       secure: true,

@@ -1,4 +1,5 @@
 "use client";
+import { formatError } from "@boby-ai/shared";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -36,41 +37,53 @@ const Login = () => {
   });
 
   const handleSubmit = async (data: z.infer<typeof schema>) => {
-    await authClient.signIn.email(
-      { email: data.email, password: data.password },
-      {
-        onRequest: () => setIsLoading(true),
-        onSuccess: () => {
-          setIsLoading(false);
-          router.push("/");
-          toast.success("Sign in successful");
+    setIsLoading(true);
+
+    await toast
+      .promise(
+        authClient.signIn.email(
+          {
+            email: data.email,
+            password: data.password,
+          },
+          { throw: true },
+        ),
+        {
+          error: (error) => formatError(error),
+          loading: "Signing in...",
+          success: "Sign in successful",
+          finally: () => setIsLoading(false),
         },
-        onError: (error) => {
-          setIsLoading(false);
-          toast.error(error.error.message || error.error.statusText);
-        },
-      },
-    );
+      )
+      .unwrap();
+
+    router.push("/");
   };
 
   const handleSocialLogin = async (provider: "github" | "google") => {
-    await authClient.signIn.social(
-      {
-        provider,
-        callbackURL: `${window.location.origin}`,
-      },
-      {
-        onRequest: () => setIsLoading(true),
-        onError: (error) => {
-          setIsLoading(false);
-          toast.error(error.error.message || error.error.statusText);
+    setIsLoading(true);
+
+    await toast
+      .promise(
+        authClient.signIn.social(
+          {
+            provider,
+            callbackURL: `${window.location.origin}`,
+          },
+          { throw: true },
+        ),
+        {
+          error: (error) => {
+            setIsLoading(false);
+            return formatError(error);
+          },
         },
-      },
-    );
+      )
+      .unwrap();
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
+    <div className="flex min-h-dvh items-center justify-center">
       <div className="flex flex-1 flex-col justify-center px-4 py-10 lg:px-6">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="flex items-center space-x-1.5">

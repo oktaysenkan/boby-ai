@@ -10,7 +10,10 @@ const app = new Hono();
 app.use(middlewares.logger);
 app.use("/*", middlewares.cors);
 app.use("*", middlewares.auth);
-app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
+
+app.on(["POST", "GET", "PUT", "DELETE"], "/api/auth/*", (c) =>
+  auth.handler(c.req.raw),
+);
 
 const router = app
   .route("health", routers.health)

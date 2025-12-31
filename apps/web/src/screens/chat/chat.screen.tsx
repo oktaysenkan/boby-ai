@@ -100,7 +100,7 @@ export default function ChatScreen({
   };
 
   return (
-    <div className="flex h-screen w-full flex-col overflow-hidden">
+    <div className="flex h-dvh w-full flex-col overflow-hidden">
       <ChatContainerRoot
         className="flex-1"
         id="chat-container-root"
