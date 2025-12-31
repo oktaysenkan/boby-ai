@@ -105,7 +105,7 @@ export default function ChatPrompt({
     <form onSubmit={form.handleSubmit(handleSubmit)}>
       <div className="relative mx-auto max-w-xl">
         <div className="flex w-full justify-center pb-2">
-          <ScrollButton variant="secondary" size="icon-sm" />
+          <ScrollButton type="button" variant="secondary" size="icon-sm" />
         </div>
         <div className="overflow-hidden rounded-2xl border border-border bg-card">
           <div className="grow px-3 pt-3 pb-4">
