@@ -49,7 +49,7 @@ const Login = () => {
           { throw: true },
         ),
         {
-          error: (error) => formatError(error),
+          error: (error) => formatError(error?.error ?? error),
           loading: "Signing in...",
           success: "Sign in successful",
           finally: () => setIsLoading(false),
