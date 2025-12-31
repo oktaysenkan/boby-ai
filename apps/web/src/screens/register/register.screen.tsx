@@ -1,4 +1,5 @@
 "use client";
+import { formatError } from "@boby-ai/shared";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -37,38 +38,48 @@ const Register = () => {
   });
 
   const handleSubmit = async (data: z.infer<typeof schema>) => {
-    await authClient.signUp.email(
-      {
-        name: data.name,
-        email: data.email,
-        password: data.password,
-      },
-      {
-        onRequest: () => setIsLoading(true),
-        onSuccess: () => {
-          setIsLoading(false);
-          router.push("/");
-          toast.success("Sign in successful");
+    await toast
+      .promise(
+        authClient.signUp.email(
+          {
+            email: data.email,
+            password: data.password,
+            name: data.name,
+          },
+          { throw: true },
+        ),
+        {
+          error: (error) => formatError(error?.error ?? error),
+          loading: "Creating account...",
+          success: "Account created successfully",
+          finally: () => setIsLoading(false),
         },
-        onError: (error) => {
-          setIsLoading(false);
-          toast.error(error.error.message || error.error.statusText);
-        },
-      },
-    );
+      )
+      .unwrap();
+
+    router.push("/");
   };
 
   const handleSocialLogin = async (provider: "github" | "google") => {
-    await authClient.signIn.social(
-      {
-        provider,
-        callbackURL: `${window.location.origin}`,
-      },
-      {
-        onRequest: () => setIsLoading(true),
-        onSettled: () => setIsLoading(false),
-      },
-    );
+    setIsLoading(true);
+
+    await toast
+      .promise(
+        authClient.signIn.social(
+          {
+            provider,
+            callbackURL: `${window.location.origin}`,
+          },
+          { throw: true },
+        ),
+        {
+          error: (error) => {
+            setIsLoading(false);
+            return formatError(error);
+          },
+        },
+      )
+      .unwrap();
   };
 
   return (
