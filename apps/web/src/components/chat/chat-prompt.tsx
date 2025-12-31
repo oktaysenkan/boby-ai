@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScrollButton } from "@/components/ui/scroll-button";
 import { Textarea } from "@/components/ui/textarea";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useAgents } from "@/services/queries/agents.query";
 
 export type ChatPromptProps = {
@@ -52,6 +53,7 @@ export default function ChatPrompt({
   onStop,
 }: ChatPromptProps) {
   const { data: agents } = useAgents();
+  const isMobile = useIsMobile();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -116,7 +118,7 @@ export default function ChatPrompt({
                   placeholder="Ask anything"
                   className="max-h-[15vh] min-h-10 w-full resize-none border-0 border-none bg-transparent! p-0 text-foreground placeholder-muted-foreground shadow-none outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
                   rows={1}
-                  autoFocus
+                  autoFocus={!isMobile}
                   onKeyDown={handleKeyDown}
                 />
               )}
