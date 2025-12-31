@@ -75,7 +75,7 @@ const Register = () => {
         {
           error: (error) => {
             setIsLoading(false);
-            return formatError(error);
+            return formatError(error?.error ?? error);
           },
         },
       )

@@ -17,7 +17,7 @@ export default async function ChatPage({ params }: ChatPageProps) {
 
   const chat = await safe(() => queryClient.fetchQuery(chatQuery(id)));
 
-  if (chat.error) return <ErrorScreen error={chat.error} />;
+  if (chat.error) return <ErrorScreen error={chat.error.message} />;
 
   return <ChatScreen id={id} messages={chat.data?.messages as UIMessage[]} />;
 }
