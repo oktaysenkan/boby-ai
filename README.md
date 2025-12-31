@@ -103,7 +103,6 @@ boby-ai/
   - Email/Password authentication
   - OAuth providers (Google, GitHub)
   - Drizzle adapter for PostgreSQL
-- **Location**: `packages/auth/src/index.ts`
 
 #### `packages/db` - Database Package
 
@@ -113,7 +112,6 @@ boby-ai/
   - Auth schemas (users, sessions, accounts)
   - Public schemas (chats, messages, agents)
 - **Scripts**: Database migrations, seeding, studio access
-- **Location**: `packages/db/src/`
 
 #### `packages/shared` - Shared Utilities
 
@@ -121,7 +119,6 @@ boby-ai/
 - AI-related types (UIMessage, metadata)
 - Agent utilities and error handling
 - Unique ID generation
-- **Exports**: Types and utilities available to both web and server apps
 
 #### `packages/config` - Shared Configuration
 
