@@ -151,16 +151,12 @@
     @apply bg-selection text-selection-foreground;
   }
   html {
-    @apply overscroll-y-none scroll-smooth;
+    @apply scroll-smooth;
   }
   body {
     @apply bg-background text-foreground;
     font-synthesis-weight: none;
     text-rendering: optimizeLegibility;
-  }
-
-  [data-slot="layout"] {
-    @apply overscroll-none;
   }
 
   a:active,

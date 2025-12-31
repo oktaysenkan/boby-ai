@@ -1,4 +1,5 @@
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { safe } from "fuuu";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
@@ -27,7 +28,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
     throw redirect("/login");
   }
 
-  await queryClient.fetchQuery(chatsQuery);
+  await safe(() => queryClient.fetchQuery(chatsQuery));
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

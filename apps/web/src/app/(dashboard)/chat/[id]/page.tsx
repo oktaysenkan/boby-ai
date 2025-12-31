@@ -1,6 +1,9 @@
 import type { UIMessage } from "@boby-ai/shared";
+import { safe } from "fuuu";
+import { notFound } from "next/navigation";
 import { getQueryClient } from "@/lib/query-client";
 import ChatScreen from "@/screens/chat/chat.screen";
+import ErrorScreen from "@/screens/error/error.screen";
 import { chatQuery } from "@/services/queries/chat.query";
 
 type ChatPageProps = {
@@ -12,7 +15,9 @@ export default async function ChatPage({ params }: ChatPageProps) {
 
   const queryClient = getQueryClient();
 
-  const chat = await queryClient.fetchQuery(chatQuery(id));
+  const chat = await safe(() => queryClient.fetchQuery(chatQuery(id)));
 
-  return <ChatScreen id={id} messages={chat?.messages as UIMessage[]} />;
+  if (chat.error) return <ErrorScreen error={chat.error} />;
+
+  return <ChatScreen id={id} messages={chat.data?.messages as UIMessage[]} />;
 }
